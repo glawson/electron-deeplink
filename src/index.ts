@@ -1,4 +1,4 @@
-const handler = require('bindings')('handler.node');
+const electronDeeplink = require('bindings')('electron-deeplink.node');
 const path = require('path');
 const fs = require('fs-extra');
 const os = require('os');
@@ -129,7 +129,7 @@ class Deeplink {
 
         fs.writeFileSync(this.infoPlistFile, infoPlist);
 
-        handler.SetRuntimeAppProtocol(this.electronPath, protocol, debugLogging);
+        electronDeeplink.SetRuntimeAppProtocol(this.electronPath, protocol, debugLogging);
     };
 
     private emitter = (event: any, url: string, eventName: string) => {

@@ -1,6 +1,6 @@
 {
   "targets": [{
-    "target_name": "handler",
+    "target_name": "electron-deeplink",
     "sources": [ ],
     "conditions": [
       ['OS=="mac"', {
@@ -8,7 +8,7 @@
           "MACOSX_DEPLOYMENT_TARGET": "10.10"
         },
         "sources": [
-          "./src/handler.mm"
+          "./src/electron-deeplink.mm"
         ],
       }]
     ],

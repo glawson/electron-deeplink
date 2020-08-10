@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Deeplink = void 0;
-var handler = require('bindings')('handler.node');
+var electronDeeplink = require('bindings')('electron-deeplink.node');
 var path = require('path');
 var fs = require('fs-extra');
 var os = require('os');
@@ -41,7 +41,7 @@ var Deeplink = /** @class */ (function () {
             infoPlist = infoPlist.replace('com.github.Electron', "com.deeplink." + protocol);
             infoPlist = infoPlist.replace(/<\/dict>\n<\/plist>/, bundleURL);
             fs.writeFileSync(_this.infoPlistFile, infoPlist);
-            handler.SetRuntimeAppProtocol(_this.electronPath, protocol, debugLogging);
+            electronDeeplink.SetRuntimeAppProtocol(_this.electronPath, protocol, debugLogging);
         };
         this.emitter = function (event, url, eventName) {
             event.preventDefault();
