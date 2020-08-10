@@ -1,6 +1,6 @@
 const electronDeeplink = require('bindings')('electron-deeplink.node');
 const path = require('path');
-const fs = require('fs-extra');
+const fs = require('fs');
 const os = require('os');
 const EventEmitter = require('events');
 const { infoPlistTemplate } = require('./templates');

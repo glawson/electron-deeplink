@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Deeplink = void 0;
 var electronDeeplink = require('bindings')('electron-deeplink.node');
 var path = require('path');
-var fs = require('fs-extra');
+var fs = require('fs');
 var os = require('os');
 var EventEmitter = require('events');
 var infoPlistTemplate = require('./templates').infoPlistTemplate;
