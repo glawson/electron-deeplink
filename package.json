@@ -4,16 +4,15 @@
     "description": "",
     "main": "./dist/index.js",
     "files": [
+        "/dist",
         "/src",
-        ".gitignore",
         "binding.gyp",
         "package.json",
-        "package-lock.json",
         "README.md"
     ],
     "scripts": {
         "build": "tsc & node-gyp rebuild",
-        "clean": "node-gyp clean",
+        "clean": "rm -rf ./dist & node-gyp clean",
         "format": "clang-format -i ./src/handler.mm",
         "test": "./node_modules/.bin/mocha --reporter spec"
     },

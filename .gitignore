@@ -1,6 +1,4 @@
 node_modules
 *.log
 build
-handler.app
-handler.applescript
 package-lock.json
