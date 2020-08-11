@@ -23,13 +23,13 @@
         "chai": "^4.2.0",
         "clang-format": "^1.4.0",
         "mocha": "^8.0.1",
-        "node-gyp": "^7.0.0",
+        "node-gyp": "^6.0.1",
         "nyc": "^15.1.0",
         "prettier": "^2.0.5",
         "typescript": "^3.9.7"
     },
     "dependencies": {
         "bindings": "^1.5.0",
-        "node-addon-api": "^3.0.0"
+        "node-addon-api": "^2.0.0"
     }
 }
