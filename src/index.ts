@@ -101,6 +101,10 @@ class Deeplink {
         app.on('second-instance', (event, args) => {
             // handle windows here
 
+            if (!this.config) {
+                return;
+            }
+
             if (this.config.mainWindow.isMinimized()) {
                 this.config.mainWindow.restore();
             }
