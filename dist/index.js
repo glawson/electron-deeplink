@@ -75,7 +75,7 @@ var Deeplink = /** @class */ (function () {
             app.quit();
             return;
         }
-        var deeplinkEmitter = new EventEmitter();
+        this.events = new EventEmitter();
         if (isDev) {
             this.createHandlerApp();
         }
@@ -85,7 +85,6 @@ var Deeplink = /** @class */ (function () {
         app.on('second-instance', function (event, url) { return _this.emitter(event, url, 'second-instance'); });
         app.on('open-url', function (event, url) { return _this.emitter(event, url, 'open-url'); });
         app.on('open-file', function (event, url) { return _this.emitter(event, url, 'open-file'); });
-        this.events = deeplinkEmitter;
     }
     return Deeplink;
 }());

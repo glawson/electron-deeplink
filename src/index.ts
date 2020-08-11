@@ -70,7 +70,7 @@ class Deeplink {
             return;
         }
 
-        const deeplinkEmitter = new EventEmitter();
+        this.events = new EventEmitter();
 
         if (isDev) {
             this.createHandlerApp();
@@ -85,8 +85,6 @@ class Deeplink {
         app.on('open-url', (event: any, url) => this.emitter(event, url, 'open-url'));
 
         app.on('open-file', (event, url) => this.emitter(event, url, 'open-file'));
-
-        this.events = deeplinkEmitter;
     }
 
     private checkConfig = () => {
