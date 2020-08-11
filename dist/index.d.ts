@@ -33,6 +33,7 @@ interface DeeplinkConfig {
     isDev?: boolean;
     isYarn?: boolean;
     debugLogging?: boolean;
+    log: any;
 }
 declare class Deeplink {
     events?: any;

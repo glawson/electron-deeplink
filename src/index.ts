@@ -3,7 +3,6 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const EventEmitter = require('events');
-const log = require('electron-log');
 const { infoPlistTemplate } = require('./templates');
 
 interface EventHandler {
@@ -48,6 +47,7 @@ interface DeeplinkConfig {
     isDev?: boolean;
     isYarn?: boolean;
     debugLogging?: boolean;
+    log: any;
 }
 
 class Deeplink {
@@ -59,11 +59,17 @@ class Deeplink {
     private config: DeeplinkConfig;
 
     constructor(config: DeeplinkConfig) {
-        const { app, mainWindow, protocol, isDev = false, debugLogging = false } = config;
-        this.config = { app, mainWindow, protocol, isDev, debugLogging };
+        const { app, mainWindow, protocol, isDev = false, debugLogging = false, log } = config;
+
+        this.config = { app, mainWindow, protocol, isDev, debugLogging, log };
 
         if (debugLogging) {
-            log.info(`electron-deeplink: debugLogging is enabled`);
+            if (!log) {
+                this.config.log = require('electron-log');
+                this.config.log.transports.file.level = 'debug';
+            }
+
+            this.config.log.debug(`electron-deeplink: debugLogging is enabled`);
         }
 
         this.checkConfig();
@@ -72,7 +78,7 @@ class Deeplink {
 
         if (!instanceLock) {
             if (debugLogging) {
-                log.info(`electron-deeplink: unable to lock instance`);
+                this.config.log.debug(`electron-deeplink: unable to lock instance`);
             }
             app.quit();
             return;
@@ -143,7 +149,7 @@ class Deeplink {
         const { debugLogging } = this.config;
 
         if (debugLogging) {
-            log.info(`electron-deeplink: ${eventName}: ${url}`);
+            this.config.log.debug(`electron-deeplink: ${eventName}: ${url}`);
         }
 
         if (this.events) {
@@ -162,7 +168,7 @@ class Deeplink {
             const infoPlist = fs.readFileSync(this.infoPlistFileBak, 'utf-8');
 
             if (debugLogging) {
-                log.info(`electron-deeplink: restoring Info.plist`);
+                this.config.log.debug(`electron-deeplink: restoring Info.plist`);
             }
 
             fs.writeFileSync(this.infoPlistFile, infoPlist);

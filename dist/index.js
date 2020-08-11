@@ -6,7 +6,6 @@ var path = require('path');
 var fs = require('fs');
 var os = require('os');
 var EventEmitter = require('events');
-var log = require('electron-log');
 var infoPlistTemplate = require('./templates').infoPlistTemplate;
 var Deeplink = /** @class */ (function () {
     function Deeplink(config) {
@@ -48,7 +47,7 @@ var Deeplink = /** @class */ (function () {
             event.preventDefault();
             var debugLogging = _this.config.debugLogging;
             if (debugLogging) {
-                log.info("electron-deeplink: " + eventName + ": " + url);
+                _this.config.log.debug("electron-deeplink: " + eventName + ": " + url);
             }
             if (_this.events) {
                 _this.events.emit('received', url);
@@ -62,22 +61,26 @@ var Deeplink = /** @class */ (function () {
             if (fs.existsSync(_this.infoPlistFileBak)) {
                 var infoPlist = fs.readFileSync(_this.infoPlistFileBak, 'utf-8');
                 if (debugLogging) {
-                    log.info("electron-deeplink: restoring Info.plist");
+                    _this.config.log.debug("electron-deeplink: restoring Info.plist");
                 }
                 fs.writeFileSync(_this.infoPlistFile, infoPlist);
             }
         };
         this.getProtocol = function () { return _this.config.protocol; };
-        var app = config.app, mainWindow = config.mainWindow, protocol = config.protocol, _a = config.isDev, isDev = _a === void 0 ? false : _a, _b = config.debugLogging, debugLogging = _b === void 0 ? false : _b;
-        this.config = { app: app, mainWindow: mainWindow, protocol: protocol, isDev: isDev, debugLogging: debugLogging };
+        var app = config.app, mainWindow = config.mainWindow, protocol = config.protocol, _a = config.isDev, isDev = _a === void 0 ? false : _a, _b = config.debugLogging, debugLogging = _b === void 0 ? false : _b, log = config.log;
+        this.config = { app: app, mainWindow: mainWindow, protocol: protocol, isDev: isDev, debugLogging: debugLogging, log: log };
         if (debugLogging) {
-            log.info("electron-deeplink: debugLogging is enabled");
+            if (!log) {
+                this.config.log = require('electron-log');
+                this.config.log.transports.file.level = 'debug';
+            }
+            this.config.log.debug("electron-deeplink: debugLogging is enabled");
         }
         this.checkConfig();
         var instanceLock = app.requestSingleInstanceLock();
         if (!instanceLock) {
             if (debugLogging) {
-                log.info("electron-deeplink: unable to lock instance");
+                this.config.log.debug("electron-deeplink: unable to lock instance");
             }
             app.quit();
             return;
