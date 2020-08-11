@@ -33,7 +33,6 @@ interface DeeplinkConfig {
     isDev?: boolean;
     isYarn?: boolean;
     debugLogging?: boolean;
-    log?: any;
 }
 declare class Deeplink {
     events?: any;
@@ -42,6 +41,7 @@ declare class Deeplink {
     private infoPlistFile?;
     private infoPlistFileBak?;
     private config;
+    private logger?;
     constructor(config: DeeplinkConfig);
     private checkConfig;
     private createHandlerApp;

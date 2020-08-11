@@ -3,7 +3,8 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
 
-void SetRuntimeAppProtocol(const Napi::CallbackInfo &info) {
+Napi::Object SetRuntimeAppProtocol(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
   const std::string path = info[0].As<Napi::String>().Utf8Value();
   const std::string protocol = info[1].As<Napi::String>().Utf8Value();
   const Boolean debug = info[2].As<Napi::Boolean>();
@@ -39,6 +40,12 @@ void SetRuntimeAppProtocol(const Napi::CallbackInfo &info) {
     NSLog(@"url: %@", url);
     NSLog(@"urlList: %@", urlList);
   }
+
+  Napi::Object results = Napi::Object::New(env);
+
+  results.Set("test", "test");
+
+  return results;
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {

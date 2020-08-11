@@ -47,7 +47,6 @@ interface DeeplinkConfig {
     isDev?: boolean;
     isYarn?: boolean;
     debugLogging?: boolean;
-    log?: any;
 }
 
 class Deeplink {
@@ -57,19 +56,17 @@ class Deeplink {
     private infoPlistFile?: string;
     private infoPlistFileBak?: string;
     private config: DeeplinkConfig;
+    private logger?: any;
 
     constructor(config: DeeplinkConfig) {
-        const { app, mainWindow, protocol, isDev = false, debugLogging = false, log } = config;
+        const { app, mainWindow, protocol, isDev = false, debugLogging = false } = config;
 
-        this.config = { app, mainWindow, protocol, isDev, debugLogging, log };
+        this.config = { app, mainWindow, protocol, isDev, debugLogging };
 
         if (debugLogging) {
-            if (!log) {
-                this.config.log = require('electron-log');
-                this.config.log.transports.file.level = 'debug';
-            }
-
-            this.config.log.debug(`electron-deeplink: debugLogging is enabled`);
+            this.logger = require('electron-log');
+            this.logger.transports.file.level = 'debug';
+            this.logger.debug(`electron-deeplink: debugLogging is enabled`);
         }
 
         this.checkConfig();
@@ -78,7 +75,7 @@ class Deeplink {
 
         if (!instanceLock) {
             if (debugLogging) {
-                this.config.log.debug(`electron-deeplink: unable to lock instance`);
+                this.logger.debug(`electron-deeplink: unable to lock instance`);
             }
             app.quit();
             return;
@@ -87,7 +84,11 @@ class Deeplink {
         this.events = new EventEmitter();
 
         if (isDev) {
-            this.createHandlerApp();
+            const test = this.createHandlerApp();
+
+            if (debugLogging) {
+                this.logger.debug(`electron-deeplink: handler results`, test);
+            }
         }
 
         if (!app.isDefaultProtocolClient(protocol)) {
@@ -141,7 +142,7 @@ class Deeplink {
 
         fs.writeFileSync(this.infoPlistFile, infoPlist);
 
-        electronDeeplink.SetRuntimeAppProtocol(this.electronPath, protocol, debugLogging);
+        return electronDeeplink.SetRuntimeAppProtocol(this.electronPath, protocol, debugLogging);
     };
 
     private emitter = (event: any, url: string, eventName: string) => {
@@ -149,7 +150,7 @@ class Deeplink {
         const { debugLogging } = this.config;
 
         if (debugLogging) {
-            this.config.log.debug(`electron-deeplink: ${eventName}: ${url}`);
+            this.logger.debug(`electron-deeplink: ${eventName}: ${url}`);
         }
 
         if (this.events) {
@@ -168,7 +169,7 @@ class Deeplink {
             const infoPlist = fs.readFileSync(this.infoPlistFileBak, 'utf-8');
 
             if (debugLogging) {
-                this.config.log.debug(`electron-deeplink: restoring Info.plist`);
+                this.logger.debug(`electron-deeplink: restoring Info.plist`);
             }
 
             fs.writeFileSync(this.infoPlistFile, infoPlist);
@@ -177,10 +178,7 @@ class Deeplink {
 
     public getProtocol = () => this.config.protocol;
     public getLogfile = () => {
-        if (!this.config.log) {
-            return;
-        }
-        return this.config.log.transports.file.getFile().path;
+        return this.logger ? this.logger.transports.file.getFile().path : 'debugLogging is disabled';
     };
 }
 
