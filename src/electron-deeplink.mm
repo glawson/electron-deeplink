@@ -43,7 +43,29 @@ Napi::Object SetRuntimeAppProtocol(const Napi::CallbackInfo &info) {
 
   Napi::Object results = Napi::Object::New(env);
 
-  results.Set("test", "test");
+
+
+  if (debug) {
+    NSString *registerStatusMsg = [((NSString *)SecCopyErrorMessageString(registerStatus, NULL))autorelease];
+    NSString *setDefaultStatusMsg = [((NSString *)SecCopyErrorMessageString(setDefaultStatus, NULL))autorelease];
+    Napi::Array appUrls = Napi::Array::New(env, 5);
+
+    for(int i = 0; i < CFArrayGetCount(urlList); i++) {
+      NSString *urlItem = [(NSString *)CFArrayGetValueAtIndex(urlList, i )autorelease];
+
+      appUrls[i] = [urlItem UTF8String];
+
+    }
+
+    results.Set("appProtocol", [appProtocol UTF8String]);
+    results.Set("appPath", [appPath UTF8String]);
+    results.Set("inUrl", [inUrl.absoluteString UTF8String]);
+    results.Set("registerStatus", [registerStatusMsg UTF8String]);
+    results.Set("setDefaultStatus", [setDefaultStatusMsg UTF8String]);
+    results.Set("bundleID", [bundleID UTF8String]);
+    results.Set("url", [url.absoluteString UTF8String]);
+    results.Set("urlList", appUrls);
+  } 
 
   return results;
 }
