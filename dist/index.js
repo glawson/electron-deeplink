@@ -88,9 +88,11 @@ var Deeplink = /** @class */ (function () {
         }
         this.events = new EventEmitter();
         if (isDev) {
-            var test = this.createHandlerApp();
+            var handlerDebug_1 = this.createHandlerApp();
             if (debugLogging) {
-                this.logger.debug("electron-deeplink: handler results", test);
+                Object.keys(handlerDebug_1).forEach(function (key) {
+                    _this.logger.debug("electron-deeplink: HANDLER: " + key + ": " + (Array.isArray(handlerDebug_1[key]) ? JSON.stringify(handlerDebug_1[key]) : handlerDebug_1[key]));
+                });
             }
         }
         if (!app.isDefaultProtocolClient(protocol)) {

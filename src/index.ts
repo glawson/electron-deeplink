@@ -84,10 +84,14 @@ class Deeplink {
         this.events = new EventEmitter();
 
         if (isDev) {
-            const test = this.createHandlerApp();
+            const handlerDebug = this.createHandlerApp();
 
             if (debugLogging) {
-                this.logger.debug(`electron-deeplink: handler results`, test);
+                Object.keys(handlerDebug).forEach((key) => {
+                    this.logger.debug(
+                        `electron-deeplink: HANDLER: ${key}: ${Array.isArray(handlerDebug[key]) ? JSON.stringify(handlerDebug[key]) : handlerDebug[key]}`
+                    );
+                });
             }
         }
 

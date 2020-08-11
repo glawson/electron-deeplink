@@ -1,10 +1,19 @@
 const { expect } = require('chai');
-const { setRuntimeAppProtocol } = require('../index');
+const { Deeplink } = require('../dist/index');
+const path = require('path');
+
+const app = {
+    requestSingleInstanceLock: () => true,
+    getAppPath: () => path.join(__dirname),
+    isDefaultProtocolClient: () => false,
+    setAsDefaultProtocolClient: () => null,
+    on: () => null,
+};
 
 describe('electron-deeplink', () => {
-    describe('setProtocolForBundleId()', () => {
-        it('should return a string', async () => {
-            setRuntimeAppProtocol('loom-desktop-dev');
+    describe('initialize Deeplink', () => {
+        it('should return an object', async () => {
+            const deeplink = new Deeplink({ app, mainWindow: null, protocol: 'my-test-app', isDev: true, debugLogging: true });
 
             expect(1).to.equal(1);
         });

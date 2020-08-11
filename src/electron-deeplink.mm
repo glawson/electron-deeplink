@@ -20,8 +20,8 @@ Napi::Object SetRuntimeAppProtocol(const Napi::CallbackInfo &info) {
   OSStatus registerStatus =
       LSRegisterURL((__bridge CFURLRef _Nonnull)(inUrl), true);
 
-
-  NSString *bundleID = [NSString stringWithFormat:@"com.deeplink.%@", appProtocol];
+  NSString *bundleID =
+      [NSString stringWithFormat:@"com.deeplink.%@", appProtocol];
   OSStatus setDefaultStatus = LSSetDefaultHandlerForURLScheme(
       (__bridge CFStringRef)appProtocol, (__bridge CFStringRef)bundleID);
 
@@ -30,31 +30,20 @@ Napi::Object SetRuntimeAppProtocol(const Napi::CallbackInfo &info) {
   CFArrayRef urlList =
       LSCopyApplicationURLsForURL((__bridge CFURLRef)url, kLSRolesAll);
 
-  if (debug) {
-    NSLog(@"appProtocol: %@", appProtocol);
-    NSLog(@"appPath: %@", appPath);
-    NSLog(@"inUrl: %@", inUrl);
-    NSLog(@"registerStatus: %d", registerStatus);
-    NSLog(@"setDefaultStatus: %d", setDefaultStatus);
-    NSLog(@"bundleID: %@", bundleID);
-    NSLog(@"url: %@", url);
-    NSLog(@"urlList: %@", urlList);
-  }
-
   Napi::Object results = Napi::Object::New(env);
 
-
-
   if (debug) {
-    NSString *registerStatusMsg = [((NSString *)SecCopyErrorMessageString(registerStatus, NULL))autorelease];
-    NSString *setDefaultStatusMsg = [((NSString *)SecCopyErrorMessageString(setDefaultStatus, NULL))autorelease];
-    Napi::Array appUrls = Napi::Array::New(env, 5);
+    NSString *registerStatusMsg = [((NSString *)SecCopyErrorMessageString(
+        registerStatus, NULL)) autorelease];
+    NSString *setDefaultStatusMsg = [((NSString *)SecCopyErrorMessageString(
+        setDefaultStatus, NULL)) autorelease];
+    Napi::Array appUrls = Napi::Array::New(env, CFArrayGetCount(urlList));
 
-    for(int i = 0; i < CFArrayGetCount(urlList); i++) {
-      NSString *urlItem = [(NSString *)CFArrayGetValueAtIndex(urlList, i )autorelease];
+    for (int i = 0; i < CFArrayGetCount(urlList); i++) {
+      NSString *urlItem =
+          [NSString stringWithFormat:@"%@", CFArrayGetValueAtIndex(urlList, i)];
 
       appUrls[i] = [urlItem UTF8String];
-
     }
 
     results.Set("appProtocol", [appProtocol UTF8String]);
@@ -65,7 +54,7 @@ Napi::Object SetRuntimeAppProtocol(const Napi::CallbackInfo &info) {
     results.Set("bundleID", [bundleID UTF8String]);
     results.Set("url", [url.absoluteString UTF8String]);
     results.Set("urlList", appUrls);
-  } 
+  }
 
   return results;
 }
