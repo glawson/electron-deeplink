@@ -48,6 +48,6 @@ declare class Deeplink {
     private emitter;
     restoreInfoPlist: () => void;
     getProtocol: () => string;
-    getLogFile: () => any;
+    getLogfile: () => any;
 }
 export { Deeplink };

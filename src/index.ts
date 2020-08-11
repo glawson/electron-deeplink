@@ -176,7 +176,7 @@ class Deeplink {
     };
 
     public getProtocol = () => this.config.protocol;
-    public getLogFile = () => {
+    public getLogfile = () => {
         if (!this.config.log) {
             return;
         }

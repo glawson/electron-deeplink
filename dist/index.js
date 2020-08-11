@@ -67,7 +67,7 @@ var Deeplink = /** @class */ (function () {
             }
         };
         this.getProtocol = function () { return _this.config.protocol; };
-        this.getLogFile = function () {
+        this.getLogfile = function () {
             if (!_this.config.log) {
                 return;
             }
