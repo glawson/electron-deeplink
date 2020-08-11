@@ -62,19 +62,13 @@ class Deeplink {
         const { app, mainWindow, protocol, isDev = false, debugLogging = false } = config;
 
         this.config = { app, mainWindow, protocol, isDev, debugLogging };
-
-        app.on('will-finish-launching', () => {
-            app.on('open-url', (event: any, url) => this.emitter(event, url, 'open-url'));
-            app.on('open-file', (event, url) => this.emitter(event, url, 'open-file'));
-        });
+        this.checkConfig();
 
         if (debugLogging) {
             this.logger = require('electron-log');
             this.logger.transports.file.level = 'debug';
             this.logger.debug(`electron-deeplink: debugLogging is enabled`);
         }
-
-        this.checkConfig();
 
         const instanceLock = app.requestSingleInstanceLock();
 
@@ -104,7 +98,19 @@ class Deeplink {
             app.setAsDefaultProtocolClient(protocol);
         }
 
-        // app.on('second-instance', (event, url) => this.emitter(event, url, 'second-instance'));
+        app.on('second-instance', (event, args) => {
+            // handle windows here
+
+            if (this.config.mainWindow.isMinimized()) {
+                this.config.mainWindow.restore();
+            }
+            this.config.mainWindow.focus();
+        });
+
+        app.on('will-finish-launching', () => {
+            app.on('open-url', (event, url) => this.emitter(event, url, 'open-url'));
+            app.on('open-file', (event, url) => this.emitter(event, url, 'open-file'));
+        });
     }
 
     private checkConfig = () => {
