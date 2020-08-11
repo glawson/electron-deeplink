@@ -63,7 +63,7 @@ class Deeplink {
         this.config = { app, mainWindow, protocol, isDev, debugLogging };
 
         if (debugLogging) {
-            log.info(`electron-deeplink: config`, config);
+            log.info(`electron-deeplink: debugLogging is enabled`);
         }
 
         this.checkConfig();

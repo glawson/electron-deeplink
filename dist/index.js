@@ -71,7 +71,7 @@ var Deeplink = /** @class */ (function () {
         var app = config.app, mainWindow = config.mainWindow, protocol = config.protocol, _a = config.isDev, isDev = _a === void 0 ? false : _a, _b = config.debugLogging, debugLogging = _b === void 0 ? false : _b;
         this.config = { app: app, mainWindow: mainWindow, protocol: protocol, isDev: isDev, debugLogging: debugLogging };
         if (debugLogging) {
-            log.info("electron-deeplink: config", config);
+            log.info("electron-deeplink: debugLogging is enabled");
         }
         this.checkConfig();
         var instanceLock = app.requestSingleInstanceLock();
