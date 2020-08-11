@@ -62,13 +62,17 @@ class Deeplink {
         const { app, mainWindow, protocol, isDev = false, debugLogging = false } = config;
         this.config = { app, mainWindow, protocol, isDev, debugLogging };
 
+        if (debugLogging) {
+            log.info(`electron-deeplink: config`, config);
+        }
+
         this.checkConfig();
 
         const instanceLock = app.requestSingleInstanceLock();
 
         if (!instanceLock) {
             if (debugLogging) {
-                log.info(`electron-deeplink:unable to lock instance`);
+                log.info(`electron-deeplink: unable to lock instance`);
             }
             app.quit();
             return;
@@ -139,7 +143,7 @@ class Deeplink {
         const { debugLogging } = this.config;
 
         if (debugLogging) {
-            log.info(`electron-deeplink:${eventName}: ${url}`);
+            log.info(`electron-deeplink: ${eventName}: ${url}`);
         }
 
         if (this.events) {
@@ -158,7 +162,7 @@ class Deeplink {
             const infoPlist = fs.readFileSync(this.infoPlistFileBak, 'utf-8');
 
             if (debugLogging) {
-                log.info(`electron-deeplink:restoring Info.plist`);
+                log.info(`electron-deeplink: restoring Info.plist`);
             }
 
             fs.writeFileSync(this.infoPlistFile, infoPlist);
