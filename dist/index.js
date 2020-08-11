@@ -72,6 +72,10 @@ var Deeplink = /** @class */ (function () {
         };
         var app = config.app, mainWindow = config.mainWindow, protocol = config.protocol, _a = config.isDev, isDev = _a === void 0 ? false : _a, _b = config.debugLogging, debugLogging = _b === void 0 ? false : _b;
         this.config = { app: app, mainWindow: mainWindow, protocol: protocol, isDev: isDev, debugLogging: debugLogging };
+        app.on('will-finish-launching', function () {
+            app.on('open-url', function (event, url) { return _this.emitter(event, url, 'open-url'); });
+            app.on('open-file', function (event, url) { return _this.emitter(event, url, 'open-file'); });
+        });
         if (debugLogging) {
             this.logger = require('electron-log');
             this.logger.transports.file.level = 'debug';
@@ -98,9 +102,7 @@ var Deeplink = /** @class */ (function () {
         if (!app.isDefaultProtocolClient(protocol)) {
             app.setAsDefaultProtocolClient(protocol);
         }
-        app.on('second-instance', function (event, url) { return _this.emitter(event, url, 'second-instance'); });
-        app.on('open-url', function (event, url) { return _this.emitter(event, url, 'open-url'); });
-        app.on('open-file', function (event, url) { return _this.emitter(event, url, 'open-file'); });
+        // app.on('second-instance', (event, url) => this.emitter(event, url, 'second-instance'));
     }
     return Deeplink;
 }());

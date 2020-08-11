@@ -63,6 +63,11 @@ class Deeplink {
 
         this.config = { app, mainWindow, protocol, isDev, debugLogging };
 
+        app.on('will-finish-launching', () => {
+            app.on('open-url', (event: any, url) => this.emitter(event, url, 'open-url'));
+            app.on('open-file', (event, url) => this.emitter(event, url, 'open-file'));
+        });
+
         if (debugLogging) {
             this.logger = require('electron-log');
             this.logger.transports.file.level = 'debug';
@@ -99,11 +104,7 @@ class Deeplink {
             app.setAsDefaultProtocolClient(protocol);
         }
 
-        app.on('second-instance', (event, url) => this.emitter(event, url, 'second-instance'));
-
-        app.on('open-url', (event: any, url) => this.emitter(event, url, 'open-url'));
-
-        app.on('open-file', (event, url) => this.emitter(event, url, 'open-file'));
+        // app.on('second-instance', (event, url) => this.emitter(event, url, 'second-instance'));
     }
 
     private checkConfig = () => {
