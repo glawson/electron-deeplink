@@ -48,7 +48,7 @@ var Deeplink = /** @class */ (function () {
             event.preventDefault();
             var debugLogging = _this.config.debugLogging;
             if (debugLogging) {
-                log.info("electron-deeplink:" + eventName + ": " + url);
+                log.info("electron-deeplink: " + eventName + ": " + url);
             }
             if (_this.events) {
                 _this.events.emit('received', url);
@@ -62,7 +62,7 @@ var Deeplink = /** @class */ (function () {
             if (fs.existsSync(_this.infoPlistFileBak)) {
                 var infoPlist = fs.readFileSync(_this.infoPlistFileBak, 'utf-8');
                 if (debugLogging) {
-                    log.info("electron-deeplink:restoring Info.plist");
+                    log.info("electron-deeplink: restoring Info.plist");
                 }
                 fs.writeFileSync(_this.infoPlistFile, infoPlist);
             }
@@ -70,11 +70,14 @@ var Deeplink = /** @class */ (function () {
         this.getProtocol = function () { return _this.config.protocol; };
         var app = config.app, mainWindow = config.mainWindow, protocol = config.protocol, _a = config.isDev, isDev = _a === void 0 ? false : _a, _b = config.debugLogging, debugLogging = _b === void 0 ? false : _b;
         this.config = { app: app, mainWindow: mainWindow, protocol: protocol, isDev: isDev, debugLogging: debugLogging };
+        if (debugLogging) {
+            log.info("electron-deeplink: config", config);
+        }
         this.checkConfig();
         var instanceLock = app.requestSingleInstanceLock();
         if (!instanceLock) {
             if (debugLogging) {
-                log.info("electron-deeplink:unable to lock instance");
+                log.info("electron-deeplink: unable to lock instance");
             }
             app.quit();
             return;
