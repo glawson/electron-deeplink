@@ -47,7 +47,7 @@ interface DeeplinkConfig {
     isDev?: boolean;
     isYarn?: boolean;
     debugLogging?: boolean;
-    log: any;
+    log?: any;
 }
 
 class Deeplink {
@@ -176,6 +176,12 @@ class Deeplink {
     };
 
     public getProtocol = () => this.config.protocol;
+    public getLogFile = () => {
+        if (!this.config.log) {
+            return;
+        }
+        return this.config.log.transports.file.getFile().path;
+    };
 }
 
 export { Deeplink };

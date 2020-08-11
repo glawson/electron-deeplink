@@ -67,6 +67,12 @@ var Deeplink = /** @class */ (function () {
             }
         };
         this.getProtocol = function () { return _this.config.protocol; };
+        this.getLogFile = function () {
+            if (!_this.config.log) {
+                return;
+            }
+            return _this.config.log.transports.file.getFile().path;
+        };
         var app = config.app, mainWindow = config.mainWindow, protocol = config.protocol, _a = config.isDev, isDev = _a === void 0 ? false : _a, _b = config.debugLogging, debugLogging = _b === void 0 ? false : _b, log = config.log;
         this.config = { app: app, mainWindow: mainWindow, protocol: protocol, isDev: isDev, debugLogging: debugLogging, log: log };
         if (debugLogging) {

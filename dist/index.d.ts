@@ -33,7 +33,7 @@ interface DeeplinkConfig {
     isDev?: boolean;
     isYarn?: boolean;
     debugLogging?: boolean;
-    log: any;
+    log?: any;
 }
 declare class Deeplink {
     events?: any;
@@ -48,5 +48,6 @@ declare class Deeplink {
     private emitter;
     restoreInfoPlist: () => void;
     getProtocol: () => string;
+    getLogFile: () => any;
 }
 export { Deeplink };
