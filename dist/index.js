@@ -6,6 +6,7 @@ var path = require('path');
 var fs = require('fs');
 var os = require('os');
 var EventEmitter = require('events');
+var log = require('electron-log');
 var infoPlistTemplate = require('./templates').infoPlistTemplate;
 var Deeplink = /** @class */ (function () {
     function Deeplink(config) {
@@ -47,7 +48,7 @@ var Deeplink = /** @class */ (function () {
             event.preventDefault();
             var debugLogging = _this.config.debugLogging;
             if (debugLogging) {
-                console.info("electron-deeplink:" + eventName + ": " + url);
+                log.info("electron-deeplink:" + eventName + ": " + url);
             }
             if (_this.events) {
                 _this.events.emit('received', url);
@@ -61,7 +62,7 @@ var Deeplink = /** @class */ (function () {
             if (fs.existsSync(_this.infoPlistFileBak)) {
                 var infoPlist = fs.readFileSync(_this.infoPlistFileBak, 'utf-8');
                 if (debugLogging) {
-                    console.info("electron-deeplink:restoring Info.plist");
+                    log.info("electron-deeplink:restoring Info.plist");
                 }
                 fs.writeFileSync(_this.infoPlistFile, infoPlist);
             }
@@ -73,7 +74,7 @@ var Deeplink = /** @class */ (function () {
         var instanceLock = app.requestSingleInstanceLock();
         if (!instanceLock) {
             if (debugLogging) {
-                console.info("electron-deeplink:unable to lock instance");
+                log.info("electron-deeplink:unable to lock instance");
             }
             app.quit();
             return;

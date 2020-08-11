@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const EventEmitter = require('events');
+const log = require('electron-log');
 const { infoPlistTemplate } = require('./templates');
 
 interface EventHandler {
@@ -67,7 +68,7 @@ class Deeplink {
 
         if (!instanceLock) {
             if (debugLogging) {
-                console.info(`electron-deeplink:unable to lock instance`);
+                log.info(`electron-deeplink:unable to lock instance`);
             }
             app.quit();
             return;
@@ -138,7 +139,7 @@ class Deeplink {
         const { debugLogging } = this.config;
 
         if (debugLogging) {
-            console.info(`electron-deeplink:${eventName}: ${url}`);
+            log.info(`electron-deeplink:${eventName}: ${url}`);
         }
 
         if (this.events) {
@@ -157,7 +158,7 @@ class Deeplink {
             const infoPlist = fs.readFileSync(this.infoPlistFileBak, 'utf-8');
 
             if (debugLogging) {
-                console.info(`electron-deeplink:restoring Info.plist`);
+                log.info(`electron-deeplink:restoring Info.plist`);
             }
 
             fs.writeFileSync(this.infoPlistFile, infoPlist);

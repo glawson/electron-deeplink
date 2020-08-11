@@ -30,6 +30,7 @@
     },
     "dependencies": {
         "bindings": "^1.5.0",
+        "electron-log": "^4.2.3",
         "node-addon-api": "^2.0.0"
     }
 }
