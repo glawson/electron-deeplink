@@ -72,6 +72,9 @@ var Deeplink = /** @class */ (function () {
         this.checkConfig();
         var instanceLock = app.requestSingleInstanceLock();
         if (!instanceLock) {
+            if (debugLogging) {
+                console.info("electron-deeplink:unable to lock instance");
+            }
             app.quit();
             return;
         }
