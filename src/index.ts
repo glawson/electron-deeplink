@@ -49,20 +49,30 @@ interface DeeplinkConfig {
     debugLogging?: boolean;
 }
 
+interface InstanceConfig {
+    protocol: string | null;
+    debugLogging: boolean;
+    isDev: boolean;
+}
+
 class Deeplink {
     public events?: any;
     private appPath?: string;
     private electronPath?: string;
     private infoPlistFile?: string;
     private infoPlistFileBak?: string;
-    private config: DeeplinkConfig;
+
     private logger?: any;
+    // private app: App;
+    // private mainWindow: MainWindow;
+    private config: InstanceConfig;
 
     constructor(config: DeeplinkConfig) {
         const { app, mainWindow, protocol, isDev = false, debugLogging = false } = config;
 
-        this.config = { app, mainWindow, protocol, isDev, debugLogging };
-        this.checkConfig();
+        this.config = { protocol, debugLogging, isDev };
+
+        this.checkConfig(config);
 
         if (debugLogging) {
             this.logger = require('electron-log');
@@ -70,20 +80,20 @@ class Deeplink {
             this.logger.debug(`electron-deeplink: debugLogging is enabled`);
         }
 
-        const instanceLock = app.requestSingleInstanceLock();
+        // const instanceLock = app.requestSingleInstanceLock();
 
-        if (!instanceLock) {
-            if (debugLogging) {
-                this.logger.debug(`electron-deeplink: unable to lock instance`);
-            }
-            app.quit();
-            return;
-        }
+        // if (!instanceLock) {
+        //     if (debugLogging) {
+        //         this.logger.debug(`electron-deeplink: unable to lock instance`);
+        //     }
+        //     app.quit();
+        //     return;
+        // }
 
         this.events = new EventEmitter();
 
         if (isDev) {
-            const handlerDebug = this.createHandlerApp();
+            const handlerDebug = this.runHandlerApp(app);
 
             if (debugLogging) {
                 Object.keys(handlerDebug).forEach((key) => {
@@ -98,28 +108,28 @@ class Deeplink {
             app.setAsDefaultProtocolClient(protocol);
         }
 
-        app.on('second-instance', (event, args) => {
-            // handle windows here
+        // app.on('second-instance', (event, args) => {
+        //     // handle windows here
 
-            if (!this.config) {
-                return;
-            }
+        //     if (!this.config) {
+        //         return;
+        //     }
 
-            if (this.config.mainWindow.isMinimized()) {
-                this.config.mainWindow.restore();
-            }
-            this.config.mainWindow.focus();
-        });
+        //     if (mainWindow.isMinimized()) {
+        //         mainWindow.restore();
+        //     }
+        //     mainWindow.focus();
+        // });
 
-        app.on('will-finish-launching', () => {
-            app.on('open-url', (event, url) => this.emitter(event, url, 'open-url'));
-            app.on('open-file', (event, url) => this.emitter(event, url, 'open-file'));
-        });
+        // app.on('will-finish-launching', () => {
+        //     app.on('open-url', (event, url) => this.emitter(event, url, 'open-url'));
+        //     app.on('open-file', (event, url) => this.emitter(event, url, 'open-file'));
+        // });
     }
 
-    private checkConfig = () => {
+    private checkConfig = (config: DeeplinkConfig) => {
         const expectedKeys = ['app', 'mainWindow', 'protocol'];
-        const configKeys = Object.keys(this.config);
+        const configKeys = Object.keys(config);
 
         const missingKeys = expectedKeys.filter((expectedKey) => {
             return !configKeys.includes(expectedKey);
@@ -130,13 +140,12 @@ class Deeplink {
         }
     };
 
-    private createHandlerApp = () => {
-        const { app, protocol, debugLogging } = this.config;
-
+    private runHandlerApp = (app: App) => {
         if (os.platform() !== 'darwin') {
             return;
         }
 
+        const { protocol, debugLogging } = this.config;
         const bundleURL = infoPlistTemplate.replace(/{PROTOCOL}/g, protocol);
         let infoPlist;
 
@@ -160,18 +169,18 @@ class Deeplink {
         return electronDeeplink.SetRuntimeAppProtocol(this.electronPath, protocol, debugLogging);
     };
 
-    private emitter = (event: any, url: string, eventName: string) => {
-        event.preventDefault();
-        const { debugLogging } = this.config;
+    // private emitter = (event: any, url: string, eventName: string) => {
+    //     event.preventDefault();
+    //     const { debugLogging } = this.config;
 
-        if (debugLogging) {
-            this.logger.debug(`electron-deeplink: ${eventName}: ${url}`);
-        }
+    //     if (debugLogging) {
+    //         this.logger.debug(`electron-deeplink: ${eventName}: ${url}`);
+    //     }
 
-        if (this.events) {
-            this.events.emit('received', url);
-        }
-    };
+    //     if (this.events) {
+    //         this.events.emit('received', url);
+    //     }
+    // };
 
     public restoreInfoPlist = () => {
         const { debugLogging, isDev } = this.config;

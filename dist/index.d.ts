@@ -40,14 +40,13 @@ declare class Deeplink {
     private electronPath?;
     private infoPlistFile?;
     private infoPlistFileBak?;
-    private config;
     private logger?;
+    private config;
     constructor(config: DeeplinkConfig);
     private checkConfig;
-    private createHandlerApp;
-    private emitter;
+    private runHandlerApp;
     restoreInfoPlist: () => void;
-    getProtocol: () => string;
+    getProtocol: () => string | null;
     getLogfile: () => any;
 }
 export { Deeplink };

@@ -10,9 +10,9 @@ var infoPlistTemplate = require('./templates').infoPlistTemplate;
 var Deeplink = /** @class */ (function () {
     function Deeplink(config) {
         var _this = this;
-        this.checkConfig = function () {
+        this.checkConfig = function (config) {
             var expectedKeys = ['app', 'mainWindow', 'protocol'];
-            var configKeys = Object.keys(_this.config);
+            var configKeys = Object.keys(config);
             var missingKeys = expectedKeys.filter(function (expectedKey) {
                 return !configKeys.includes(expectedKey);
             });
@@ -20,11 +20,11 @@ var Deeplink = /** @class */ (function () {
                 throw Error("electron-deeplink: missing config attributes: " + missingKeys.join(', '));
             }
         };
-        this.createHandlerApp = function () {
-            var _a = _this.config, app = _a.app, protocol = _a.protocol, debugLogging = _a.debugLogging;
+        this.runHandlerApp = function (app) {
             if (os.platform() !== 'darwin') {
                 return;
             }
+            var _a = _this.config, protocol = _a.protocol, debugLogging = _a.debugLogging;
             var bundleURL = infoPlistTemplate.replace(/{PROTOCOL}/g, protocol);
             var infoPlist;
             _this.appPath = app.getAppPath();
@@ -43,16 +43,16 @@ var Deeplink = /** @class */ (function () {
             fs.writeFileSync(_this.infoPlistFile, infoPlist);
             return electronDeeplink.SetRuntimeAppProtocol(_this.electronPath, protocol, debugLogging);
         };
-        this.emitter = function (event, url, eventName) {
-            event.preventDefault();
-            var debugLogging = _this.config.debugLogging;
-            if (debugLogging) {
-                _this.logger.debug("electron-deeplink: " + eventName + ": " + url);
-            }
-            if (_this.events) {
-                _this.events.emit('received', url);
-            }
-        };
+        // private emitter = (event: any, url: string, eventName: string) => {
+        //     event.preventDefault();
+        //     const { debugLogging } = this.config;
+        //     if (debugLogging) {
+        //         this.logger.debug(`electron-deeplink: ${eventName}: ${url}`);
+        //     }
+        //     if (this.events) {
+        //         this.events.emit('received', url);
+        //     }
+        // };
         this.restoreInfoPlist = function () {
             var _a = _this.config, debugLogging = _a.debugLogging, isDev = _a.isDev;
             if (!isDev || os.platform() !== 'darwin') {
@@ -71,24 +71,24 @@ var Deeplink = /** @class */ (function () {
             return _this.logger ? _this.logger.transports.file.getFile().path : 'debugLogging is disabled';
         };
         var app = config.app, mainWindow = config.mainWindow, protocol = config.protocol, _a = config.isDev, isDev = _a === void 0 ? false : _a, _b = config.debugLogging, debugLogging = _b === void 0 ? false : _b;
-        this.config = { app: app, mainWindow: mainWindow, protocol: protocol, isDev: isDev, debugLogging: debugLogging };
-        this.checkConfig();
+        this.config = { protocol: protocol, debugLogging: debugLogging, isDev: isDev };
+        this.checkConfig(config);
         if (debugLogging) {
             this.logger = require('electron-log');
             this.logger.transports.file.level = 'debug';
             this.logger.debug("electron-deeplink: debugLogging is enabled");
         }
-        var instanceLock = app.requestSingleInstanceLock();
-        if (!instanceLock) {
-            if (debugLogging) {
-                this.logger.debug("electron-deeplink: unable to lock instance");
-            }
-            app.quit();
-            return;
-        }
+        // const instanceLock = app.requestSingleInstanceLock();
+        // if (!instanceLock) {
+        //     if (debugLogging) {
+        //         this.logger.debug(`electron-deeplink: unable to lock instance`);
+        //     }
+        //     app.quit();
+        //     return;
+        // }
         this.events = new EventEmitter();
         if (isDev) {
-            var handlerDebug_1 = this.createHandlerApp();
+            var handlerDebug_1 = this.runHandlerApp(app);
             if (debugLogging) {
                 Object.keys(handlerDebug_1).forEach(function (key) {
                     _this.logger.debug("electron-deeplink: HANDLER: " + key + ": " + (Array.isArray(handlerDebug_1[key]) ? JSON.stringify(handlerDebug_1[key]) : handlerDebug_1[key]));
@@ -98,20 +98,20 @@ var Deeplink = /** @class */ (function () {
         if (!app.isDefaultProtocolClient(protocol)) {
             app.setAsDefaultProtocolClient(protocol);
         }
-        app.on('second-instance', function (event, args) {
-            // handle windows here
-            if (!_this.config) {
-                return;
-            }
-            if (_this.config.mainWindow.isMinimized()) {
-                _this.config.mainWindow.restore();
-            }
-            _this.config.mainWindow.focus();
-        });
-        app.on('will-finish-launching', function () {
-            app.on('open-url', function (event, url) { return _this.emitter(event, url, 'open-url'); });
-            app.on('open-file', function (event, url) { return _this.emitter(event, url, 'open-file'); });
-        });
+        // app.on('second-instance', (event, args) => {
+        //     // handle windows here
+        //     if (!this.config) {
+        //         return;
+        //     }
+        //     if (mainWindow.isMinimized()) {
+        //         mainWindow.restore();
+        //     }
+        //     mainWindow.focus();
+        // });
+        // app.on('will-finish-launching', () => {
+        //     app.on('open-url', (event, url) => this.emitter(event, url, 'open-url'));
+        //     app.on('open-file', (event, url) => this.emitter(event, url, 'open-file'));
+        // });
     }
     return Deeplink;
 }());
