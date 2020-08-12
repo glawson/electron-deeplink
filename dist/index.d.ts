@@ -41,10 +41,13 @@ declare class Deeplink {
     private infoPlistFile?;
     private infoPlistFileBak?;
     private logger?;
+    private app;
+    private mainWindow;
     private config;
     constructor(config: DeeplinkConfig);
     private checkConfig;
-    private runHandlerApp;
+    private setAppProtocol;
+    private emitter;
     restoreInfoPlist: () => void;
     getProtocol: () => string | null;
     getLogfile: () => any;
