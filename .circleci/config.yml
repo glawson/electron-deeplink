@@ -1,0 +1,16 @@
+version: 2.1
+jobs:
+  build:
+    macos:
+      xcode: 11.3.0
+    steps:
+      - checkout
+      - run: 
+          name: Install
+          command: npm install
+      - run:
+          name: Running Build
+          command: npm run build
+      - run:
+          name: Running Tests
+          command: npm run test

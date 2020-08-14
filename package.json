@@ -1,0 +1,39 @@
+{
+    "name": "electron-deeplink",
+    "version": "1.0.0",
+    "description": "",
+    "main": "./dist/index.js",
+    "files": [
+        "/dist",
+        "/src",
+        "binding.gyp",
+        "package.json",
+        "README.md"
+    ],
+    "scripts": {
+        "build": "tsc & node-gyp rebuild",
+        "clean": "rm -rf ./dist & node-gyp clean",
+        "format": "clang-format -i ./src/electron-deeplink.mm",
+        "test": "nyc mocha -r ts-node/register ./tests/**/*.spec.ts"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/mocha": "^8.0.2",
+        "@types/node": "^14.0.27",
+        "chai": "^4.2.0",
+        "clang-format": "^1.4.0",
+        "mocha": "^8.1.1",
+        "node-gyp": "^6.0.1",
+        "nyc": "^15.1.0",
+        "prettier": "^2.0.5",
+        "sinon": "^9.0.2",
+        "ts-node": "^8.10.2",
+        "typescript": "^3.9.7"
+    },
+    "dependencies": {
+        "bindings": "^1.5.0",
+        "electron-log": "^4.2.3",
+        "node-addon-api": "^2.0.0"
+    }
+}
