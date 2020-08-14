@@ -1,6 +1,6 @@
 {
     "name": "electron-deeplink",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "description": "",
     "main": "./dist/index.js",
     "files": [
@@ -17,7 +17,7 @@
         "test": "nyc mocha -r ts-node/register ./tests/**/*.spec.ts"
     },
     "author": "",
-    "license": "ISC",
+    "license": "MIT",
     "devDependencies": {
         "@types/mocha": "^8.0.2",
         "@types/node": "^14.0.27",
