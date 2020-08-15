@@ -16,7 +16,7 @@ This module was inspired due to the lack of protocol support when running non pa
 
 # example app
 
-A full working example can be found at [https://github.com/glawson/electron-deeplink](https://github.com/glawson/electron-deeplink)
+A full working example can be found at [https://github.com/glawson/electron-deeplink-example](https://github.com/glawson/electron-deeplink-example)
 
 # installation
 
