@@ -11,7 +11,7 @@ This module was inspired due to the lack of protocol support when running non pa
 
 # please note
 
--   Not completely ready for Windows (yet!) as you will need to include your own handler to capture the deeplink. Please rever to the [app 'second-instance'](https://www.electronjs.org/docs/api/app#event-second-instance) event for details.
+-   Not completely ready for Windows (yet!) as you will need to include your own handler to capture the deeplink. Please refer to the [app 'second-instance'](https://www.electronjs.org/docs/api/app#event-second-instance) event for details.
 -   For Production: While electron-deeplink handles setting `app.setAsDefaultProtocolClient`, you still need to make sure setup the mac bundleId correctly for [electron-builder](https://www.electron.build/configuration/configuration) or [electron-forge](https://www.electronforge.io/configuration).
 
 # example app
