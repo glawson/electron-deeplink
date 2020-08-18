@@ -1,6 +1,6 @@
 {
     "name": "electron-deeplink",
-    "version": "0.0.1",
+    "version": "0.0.0-development",
     "description": "",
     "main": "./dist/index.js",
     "files": [
@@ -14,7 +14,8 @@
         "build": "tsc & node-gyp rebuild",
         "clean": "rm -rf ./dist & node-gyp clean",
         "format": "clang-format -i ./src/electron-deeplink.mm",
-        "test": "nyc mocha -r ts-node/register ./tests/**/*.spec.ts"
+        "test": "nyc mocha -r ts-node/register ./tests/**/*.spec.ts",
+        "semantic-release": "semantic-release"
     },
     "author": "",
     "license": "MIT",
@@ -29,11 +30,21 @@
         "prettier": "^2.0.5",
         "sinon": "^9.0.2",
         "ts-node": "^8.10.2",
-        "typescript": "^3.9.7"
+        "typescript": "^3.9.7",
+        "semantic-release": "^17.1.1"
     },
     "dependencies": {
         "bindings": "^1.5.0",
         "electron-log": "^4.2.3",
         "node-addon-api": "^2.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/glawson/electron-deeplink.git"
+    },
+    "release": {
+        "branches": [
+            "master"
+        ]
     }
 }

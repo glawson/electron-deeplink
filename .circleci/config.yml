@@ -14,3 +14,13 @@ jobs:
       - run:
           name: Running Tests
           command: npm run test
+  release: 
+    macos:
+      xcode: 11.3.0
+    steps:
+      - run: 
+          name: Install
+          command: npm install
+      - run:
+          name: Running Release
+          command: npm run semantic-release
