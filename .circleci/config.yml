@@ -34,12 +34,12 @@ workflows:
   build_test_release:
     jobs:
       - build_and_test:
-        filters:
-          branches:
-            ignore: 
-              - master
+          filters:
+            branches:
+              ignore: 
+                - master
       - build_and_release:
-        filters:
-          branches:
-            only: 
-              - master
+          filters:
+            branches:
+              only: 
+                - master
