@@ -29,12 +29,16 @@ jobs:
           command: npm run semantic-release
 workflows:
   version: 2
-  branch_builds:
+  branch_build:
     jobs:
-      - build_and_test
+      - build_and_test:
+        filters:
+          branches:
+            only: /!master/
   release:
     jobs:
       - build_and_release:
         filters:
           branches:
-            only: master
+            only: 
+              - master
