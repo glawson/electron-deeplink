@@ -1,43 +1,45 @@
 version: 2.1
 jobs:
-  build_and_test:
-    macos:
-      xcode: 11.3.0
-    steps:
-      - checkout
-      - run: 
-          name: Install
-          command: npm install
-      - run:
-          name: Running Build
-          command: npm run build
-      - run:
-          name: Running Tests
-          command: npm run test
-  build_and_release: 
-    macos:
-      xcode: 11.3.0
-    steps:
-      - checkout
-      - run: 
-          name: Install
-          command: npm install
-      - run:
-          name: Running Build
-          command: npm run build
-      - run:
-          name: Running Release
-          command: npm run semantic-release
+    build_and_test:
+        macos:
+            xcode: 11.3.0
+        steps:
+            - checkout
+            - run:
+                  name: Install
+                  command: npm install
+            - run:
+                  name: Running Build
+                  command: npm run build
+            - run:
+                  name: Running Tests
+                  command: npm run test
+    build_and_release:
+        macos:
+            xcode: 11.3.0
+        steps:
+            - checkout
+            - run:
+                  name: Install
+                  command: npm install
+            - run:
+                  name: Running Build
+                  command: npm run build
+            - run:
+                  name: Running Release
+                  command: npm run semantic-release
 workflows:
-  version: 2
+    version: 2
 
-  build_test_release:
-    jobs:
-      - build_and_test:
-        filters:
-          branches:
-            only: /!master/
-      - build_and_release:
-        filters:
-          branches:
-            only: /master/
+    build_test_release:
+        jobs:
+            - build_and_test:
+              filters:
+                  branches:
+                      ignore:
+                          - master
+            - build_and_release:
+              filters:
+                  branches:
+                      only:
+                          - master
