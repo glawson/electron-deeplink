@@ -24,3 +24,11 @@ jobs:
       - run:
           name: Running Release
           command: npm run semantic-release
+workflows:
+  version: 2
+  package_and_release:
+    jobs:
+      - build
+      - release:
+          requires:
+            - build
