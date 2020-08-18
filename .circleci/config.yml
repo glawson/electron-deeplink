@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build:
+  build_and_test:
     macos:
       xcode: 11.3.0
     steps:
@@ -14,7 +14,7 @@ jobs:
       - run:
           name: Running Tests
           command: npm run test
-  release: 
+  build_and_release: 
     macos:
       xcode: 11.3.0
     steps:
@@ -22,13 +22,19 @@ jobs:
           name: Install
           command: npm install
       - run:
+          name: Running Build
+          command: npm run build
+      - run:
           name: Running Release
           command: npm run semantic-release
 workflows:
   version: 2
-  package_and_release:
+  branch_builds:
     jobs:
-      - build
-      - release:
-          requires:
-            - build
+      - build_and_test
+  release:
+    jobs:
+      - build_and_release
+        filters:
+          branches:
+            only: master
