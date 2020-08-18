@@ -18,6 +18,7 @@ jobs:
     macos:
       xcode: 11.3.0
     steps:
+      - checkout
       - run: 
           name: Install
           command: npm install
@@ -29,16 +30,14 @@ jobs:
           command: npm run semantic-release
 workflows:
   version: 2
-  branch_build:
+
+  build_test_release:
     jobs:
       - build_and_test:
         filters:
           branches:
             only: /!master/
-  release:
-    jobs:
       - build_and_release:
         filters:
           branches:
-            only: 
-              - master
+            only: /master/
