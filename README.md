@@ -9,16 +9,16 @@ development and production environments.
 
 This module was inspired due to the lack of protocol support when running non packaged apps on macOS (see [app.setAsDefaultProtocolClient](https://www.electronjs.org/docs/api/app#appsetasdefaultprotocolclientprotocol-path-args) for explanation). This module provides full support for running and testing the given protocol in the development environment. It also provides the same protocol support for the production envronment. In other words, protocol management is completly controlled with this module.
 
-# please note
+# Please Note
 
 -   Not completely ready for Windows (yet!) as you will need to include your own handler to capture the deeplink. Please refer to the [app 'second-instance'](https://www.electronjs.org/docs/api/app#event-second-instance) event for details.
 -   For Production: While electron-deeplink handles setting `app.setAsDefaultProtocolClient`, you still need to make sure setup the mac bundleId correctly for [electron-builder](https://www.electron.build/configuration/configuration) or [electron-forge](https://www.electronforge.io/configuration).
 
-# example app
+# Example App
 
 A full working example can be found at [https://github.com/glawson/electron-deeplink-example](https://github.com/glawson/electron-deeplink-example)
 
-# installation
+# Installation
 
 ```
 // if you use npm:
@@ -28,7 +28,7 @@ npm install electron-deeplink
 yarn add electron-deeplink
 ```
 
-# usage
+# Usage
 
 In main.js, include the electron-deeplink module and instantiate the Deeplink class towards to begining of main.js.
 
@@ -74,10 +74,10 @@ const deeplink = new Deeplink([config]);
     mainWindow: [main window reference]
 
     // required
-    // type: string 
+    // type: string
     // String representing the protocol to use. For production, this should be the same as the bundleId set in the build config.
     protocol: [protocol string]
- 
+
     // optional, default: false
     // type: boolean
     // Represents the app environment
@@ -91,6 +91,7 @@ const deeplink = new Deeplink([config]);
 ```
 
 ## events
+
 ```
 // 'recieved'
 // When a "deeplink" is recieved by the module, this event is emitted.
@@ -99,3 +100,7 @@ deeplink.on('received', (link) => {
     // do something here
 });
 ```
+
+# Contributors
+
+This repo uses [semantic-release](https://semantic-release.gitbook.io/) for versioning, which uses [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines).
