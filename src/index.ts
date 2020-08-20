@@ -1,8 +1,8 @@
-const electronDeeplink = require('bindings')('electron-deeplink.node');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const EventEmitter = require('events');
+const electronDeeplink = os.platform() === 'darwin' ? require('bindings')('electron-deeplink.node') : require('./stub');
 const { infoPlistTemplate } = require('./templates');
 
 interface EventHandler {
@@ -14,15 +14,19 @@ interface FuncBool {
 }
 
 interface FuncVoid {
-    (param?: any): void;
+    (param?: any, path?: any, argv?: any): void;
 }
 
 interface FuncString {
     (param?: any): string;
 }
 
+interface OnCallback {
+    (event: Event, argv: any): void;
+}
+
 interface On {
-    (event: string, callback: EventHandler): void;
+    (event: string, callback: OnCallback): void;
 }
 
 interface App {
@@ -103,9 +107,18 @@ class Deeplink extends EventEmitter {
             }
         }
 
-        if (!app.isDefaultProtocolClient(protocol)) {
-            app.setAsDefaultProtocolClient(protocol);
-        }
+        //if (!app.isDefaultProtocolClient(protocol)) {
+            if (os.platform() === 'win32') {
+    
+                
+
+                app.setAsDefaultProtocolClient(protocol, process.execPath, [path.resolve(process.argv[1])]);
+
+        
+            } else {
+                app.setAsDefaultProtocolClient(protocol);
+            }
+       // }
 
         app.on('second-instance', this.secondInstanceEvent);
 
@@ -153,8 +166,9 @@ class Deeplink extends EventEmitter {
         return electronDeeplink.SetRuntimeAppProtocol(this.electronPath, protocol, debugLogging);
     };
 
-    private secondInstanceEvent = () => {
-        // handle windows here
+    private secondInstanceEvent = (event: Event, argv: string[]) => {
+        console.log(JSON.stringify(argv));
+
         if (os.platform() === 'darwin') {
             this.logger.error(
                 `electron-deeplink: the app event 'second-instance' fired, this should not of happened, please check your packager bundleId config`
@@ -162,10 +176,16 @@ class Deeplink extends EventEmitter {
             return;
         }
 
-        if (this.mainWindow.isMinimized()) {
-            this.mainWindow.restore();
+        if (os.platform() === 'win32') {
+            this.emit('received', argv.slice(-1).join(''));
         }
-        this.mainWindow.focus();
+
+        if (this.mainWindow) {
+            if (this.mainWindow.isMinimized()) {
+                this.mainWindow.restore();
+            }
+            this.mainWindow.focus();
+        }
     };
 
     private openEvent = (event: any, url: string, eventName: string) => {

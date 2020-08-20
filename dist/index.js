@@ -14,11 +14,11 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Deeplink = void 0;
-var electronDeeplink = require('bindings')('electron-deeplink.node');
 var path = require('path');
 var fs = require('fs');
 var os = require('os');
 var EventEmitter = require('events');
+var electronDeeplink = os.platform() === 'darwin' ? require('bindings')('electron-deeplink.node') : require('./stub');
 var infoPlistTemplate = require('./templates').infoPlistTemplate;
 var Deeplink = /** @class */ (function (_super) {
     __extends(Deeplink, _super);
@@ -54,16 +54,21 @@ var Deeplink = /** @class */ (function (_super) {
             fs.writeFileSync(_this.infoPlistFile, infoPlist);
             return electronDeeplink.SetRuntimeAppProtocol(_this.electronPath, protocol, debugLogging);
         };
-        _this.secondInstanceEvent = function () {
-            // handle windows here
+        _this.secondInstanceEvent = function (event, argv) {
+            console.log(JSON.stringify(argv));
             if (os.platform() === 'darwin') {
                 _this.logger.error("electron-deeplink: the app event 'second-instance' fired, this should not of happened, please check your packager bundleId config");
                 return;
             }
-            if (_this.mainWindow.isMinimized()) {
-                _this.mainWindow.restore();
+            if (os.platform() === 'win32') {
+                _this.emit('received', argv.slice(-1).join(''));
             }
-            _this.mainWindow.focus();
+            if (_this.mainWindow) {
+                if (_this.mainWindow.isMinimized()) {
+                    _this.mainWindow.restore();
+                }
+                _this.mainWindow.focus();
+            }
         };
         _this.openEvent = function (event, url, eventName) {
             event.preventDefault();
@@ -116,9 +121,14 @@ var Deeplink = /** @class */ (function (_super) {
                 });
             }
         }
-        if (!app.isDefaultProtocolClient(protocol)) {
+        //if (!app.isDefaultProtocolClient(protocol)) {
+        if (os.platform() === 'win32') {
+            app.setAsDefaultProtocolClient(protocol, process.execPath, [path.resolve(process.argv[1])]);
+        }
+        else {
             app.setAsDefaultProtocolClient(protocol);
         }
+        // }
         app.on('second-instance', _this.secondInstanceEvent);
         app.on('will-finish-launching', function () {
             app.on('open-url', function (event, url) { return _this.openEvent(event, url, 'open-url'); });
