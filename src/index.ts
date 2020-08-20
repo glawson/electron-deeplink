@@ -5,10 +5,6 @@ const EventEmitter = require('events');
 const electronDeeplink = os.platform() === 'darwin' ? require('bindings')('electron-deeplink.node') : require('./stub');
 const { infoPlistTemplate } = require('./templates');
 
-interface EventHandler {
-    (event: Event, args: string): void;
-}
-
 interface FuncBool {
     (param?: any): boolean;
 }
@@ -107,18 +103,11 @@ class Deeplink extends EventEmitter {
             }
         }
 
-        //if (!app.isDefaultProtocolClient(protocol)) {
-            if (os.platform() === 'win32') {
-    
-                
-
-                app.setAsDefaultProtocolClient(protocol, process.execPath, [path.resolve(process.argv[1])]);
-
-        
-            } else {
-                app.setAsDefaultProtocolClient(protocol);
-            }
-       // }
+        if (os.platform() === 'win32') {
+            app.setAsDefaultProtocolClient(protocol, process.execPath, [path.resolve(process.argv[1])]);
+        } else {
+            app.setAsDefaultProtocolClient(protocol);
+        }
 
         app.on('second-instance', this.secondInstanceEvent);
 
