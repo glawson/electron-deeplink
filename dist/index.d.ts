@@ -1,18 +1,18 @@
 declare const EventEmitter: any;
-interface EventHandler {
-    (event: Event, args: string): void;
-}
 interface FuncBool {
     (param?: any): boolean;
 }
 interface FuncVoid {
-    (param?: any): void;
+    (param?: any, path?: any, argv?: any): void;
 }
 interface FuncString {
     (param?: any): string;
 }
+interface OnCallback {
+    (event: Event, argv: any): void;
+}
 interface On {
-    (event: string, callback: EventHandler): void;
+    (event: string, callback: OnCallback): void;
 }
 interface App {
     requestSingleInstanceLock: FuncBool;
