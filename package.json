@@ -1,7 +1,8 @@
 {
     "name": "electron-deeplink",
     "version": "0.0.0-development",
-    "description": "",
+    "description": "Node module for Electron apps that sets the default handler for a given protocol (deeplinks) in both development and production environments.",
+    "keywords": ["electron", "deeplink", "protocol", "win32", "macos"],
     "main": "./dist/index.js",
     "files": [
         "/dist",
