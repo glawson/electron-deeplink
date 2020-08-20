@@ -106,7 +106,7 @@ describe('electron-deeplink', () => {
 
         new Deeplink({ app: appMock, mainWindow: mainWindowMock, protocol, isDev: true, debugLogging: true });
 
-        appMock.emit('second-instance');
+        appMock.emit('second-instance', {}, ['path', 'path', protocol]);
 
         expect(spy1.called).to.equal(true);
         expect(spy2.called).to.equal(true);

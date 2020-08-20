@@ -156,8 +156,6 @@ class Deeplink extends EventEmitter {
     };
 
     private secondInstanceEvent = (event: Event, argv: string[]) => {
-        console.log(JSON.stringify(argv));
-
         if (os.platform() === 'darwin') {
             this.logger.error(
                 `electron-deeplink: the app event 'second-instance' fired, this should not of happened, please check your packager bundleId config`
