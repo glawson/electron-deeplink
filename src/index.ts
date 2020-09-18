@@ -5,6 +5,12 @@ const EventEmitter = require('events');
 const electronDeeplink = os.platform() === 'darwin' ? require('bindings')('electron-deeplink.node') : require('./stub');
 const { infoPlistTemplate } = require('./templates');
 
+interface Process extends NodeJS.Process {
+    mas: boolean;
+}
+
+declare const process: Process;
+
 interface FuncBool {
     (param?: any): boolean;
 }
@@ -81,7 +87,7 @@ class Deeplink extends EventEmitter {
             this.logger.debug(`electron-deeplink: debugLogging is enabled`);
         }
 
-        const instanceLock = app.requestSingleInstanceLock();
+        const instanceLock = process.mas === true ? true : app.requestSingleInstanceLock();
 
         if (!instanceLock) {
             if (debugLogging) {

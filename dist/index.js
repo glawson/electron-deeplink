@@ -55,7 +55,6 @@ var Deeplink = /** @class */ (function (_super) {
             return electronDeeplink.SetRuntimeAppProtocol(_this.electronPath, protocol, debugLogging);
         };
         _this.secondInstanceEvent = function (event, argv) {
-            console.log(JSON.stringify(argv));
             if (os.platform() === 'darwin') {
                 _this.logger.error("electron-deeplink: the app event 'second-instance' fired, this should not of happened, please check your packager bundleId config");
                 return;
@@ -105,7 +104,7 @@ var Deeplink = /** @class */ (function (_super) {
             _this.logger.transports.file.level = 'debug';
             _this.logger.debug("electron-deeplink: debugLogging is enabled");
         }
-        var instanceLock = app.requestSingleInstanceLock();
+        var instanceLock = process.mas === true ? true : app.requestSingleInstanceLock();
         if (!instanceLock) {
             if (debugLogging) {
                 _this.logger.debug("electron-deeplink: unable to lock instance");
@@ -121,14 +120,12 @@ var Deeplink = /** @class */ (function (_super) {
                 });
             }
         }
-        //if (!app.isDefaultProtocolClient(protocol)) {
         if (os.platform() === 'win32') {
             app.setAsDefaultProtocolClient(protocol, process.execPath, [path.resolve(process.argv[1])]);
         }
         else {
             app.setAsDefaultProtocolClient(protocol);
         }
-        // }
         app.on('second-instance', _this.secondInstanceEvent);
         app.on('will-finish-launching', function () {
             app.on('open-url', function (event, url) { return _this.openEvent(event, url, 'open-url'); });
