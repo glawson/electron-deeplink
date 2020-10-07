@@ -34,6 +34,7 @@ interface DeeplinkConfig {
     isDev?: boolean;
     isYarn?: boolean;
     debugLogging?: boolean;
+    electronPath: string;
 }
 declare class Deeplink extends EventEmitter {
     private appPath?;

@@ -39,7 +39,7 @@ var Deeplink = /** @class */ (function (_super) {
             var bundleURL = infoPlistTemplate.replace(/{PROTOCOL}/g, protocol);
             var infoPlist;
             _this.appPath = _this.app.getAppPath();
-            _this.electronPath = path.join(_this.appPath, '/node_modules/electron/dist/Electron.app');
+            _this.electronPath = path.join(_this.appPath, _this.config.electronPath);
             _this.infoPlistFile = path.join(_this.electronPath, '/Contents/Info.plist');
             _this.infoPlistFileBak = path.join(_this.electronPath, '/Contents/Info.deeplink');
             if (fs.existsSync(_this.infoPlistFileBak)) {
@@ -94,9 +94,9 @@ var Deeplink = /** @class */ (function (_super) {
         _this.getLogfile = function () {
             return _this.logger ? _this.logger.transports.file.getFile().path : 'debugLogging is disabled';
         };
-        var app = config.app, mainWindow = config.mainWindow, protocol = config.protocol, _a = config.isDev, isDev = _a === void 0 ? false : _a, _b = config.debugLogging, debugLogging = _b === void 0 ? false : _b;
+        var app = config.app, mainWindow = config.mainWindow, protocol = config.protocol, _a = config.isDev, isDev = _a === void 0 ? false : _a, _b = config.debugLogging, debugLogging = _b === void 0 ? false : _b, _c = config.electronPath, electronPath = _c === void 0 ? '/node_modules/electron/dist/Electron.app' : _c;
         _this.checkConfig(config);
-        _this.config = { protocol: protocol, debugLogging: debugLogging, isDev: isDev };
+        _this.config = { protocol: protocol, debugLogging: debugLogging, isDev: isDev, electronPath: electronPath };
         _this.app = app;
         _this.mainWindow = mainWindow;
         if (debugLogging) {
