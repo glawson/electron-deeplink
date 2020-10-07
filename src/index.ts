@@ -53,12 +53,14 @@ interface DeeplinkConfig {
     isDev?: boolean;
     isYarn?: boolean;
     debugLogging?: boolean;
+    electronPath: string;
 }
 
 interface InstanceConfig {
     protocol: string | null;
     debugLogging: boolean;
     isDev: boolean;
+    electronPath: string;
 }
 
 class Deeplink extends EventEmitter {
@@ -73,11 +75,11 @@ class Deeplink extends EventEmitter {
 
     constructor(config: DeeplinkConfig) {
         super();
-        const { app, mainWindow, protocol, isDev = false, debugLogging = false } = config;
+        const { app, mainWindow, protocol, isDev = false, debugLogging = false, electronPath = '/node_modules/electron/dist/Electron.app' } = config;
 
         this.checkConfig(config);
 
-        this.config = { protocol, debugLogging, isDev };
+        this.config = { protocol, debugLogging, isDev, electronPath };
         this.app = app;
         this.mainWindow = mainWindow;
 
@@ -142,7 +144,7 @@ class Deeplink extends EventEmitter {
         let infoPlist;
 
         this.appPath = this.app.getAppPath();
-        this.electronPath = path.join(this.appPath, '/node_modules/electron/dist/Electron.app');
+        this.electronPath = path.join(this.appPath, this.config.electronPath);
         this.infoPlistFile = path.join(this.electronPath, '/Contents/Info.plist');
         this.infoPlistFileBak = path.join(this.electronPath, '/Contents/Info.deeplink');
 
