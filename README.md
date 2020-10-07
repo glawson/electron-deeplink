@@ -86,6 +86,11 @@ const deeplink = new Deeplink([config]);
     // type: boolean
     // If true, outputs logging.  Uses electron-log, so files are appened/created for prod.
     debugLogging: false|true
+
+    // optional, default: '/node_modules/electron/dist/Electron.app'
+    // type: string
+    // String representing the location of Electron relative to the app root.
+    electronPath: [string]
 }
 ```
 
