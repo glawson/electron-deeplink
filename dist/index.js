@@ -120,11 +120,12 @@ var Deeplink = /** @class */ (function (_super) {
                 });
             }
         }
-        if (os.platform() === 'win32') {
-            app.setAsDefaultProtocolClient(protocol, process.execPath, [path.resolve(process.argv[1])]);
+        if (os.platform() === 'darwin') {
+            app.setAsDefaultProtocolClient(protocol);
         }
         else {
-            app.setAsDefaultProtocolClient(protocol);
+            var args = process.argv[1] ? [path.resolve(process.argv[1])] : [];
+            app.setAsDefaultProtocolClient(protocol, process.execPath, args);
         }
         app.on('second-instance', _this.secondInstanceEvent);
         app.on('will-finish-launching', function () {
