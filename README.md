@@ -108,3 +108,5 @@ deeplink.on('received', (link) => {
 # Contributors
 
 This repo uses [semantic-release](https://semantic-release.gitbook.io/) for versioning, which uses [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines).
+
+semantic-release is hooked up to CircleCI
