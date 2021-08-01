@@ -21,10 +21,9 @@ var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
 var os_1 = __importDefault(require("os"));
 var events_1 = require("events");
-var bindings_1 = __importDefault(require("bindings"));
 var stub_1 = __importDefault(require("./stub"));
 var templates_1 = require("./templates");
-var electronDeeplink = os_1.default.platform() === 'darwin' ? bindings_1.default('electron-deeplink.node') : stub_1.default;
+var electronDeeplink = os_1.default.platform() === 'darwin' ? require('bindings')('electron-deeplink.node') : stub_1.default;
 var Deeplink = /** @class */ (function (_super) {
     __extends(Deeplink, _super);
     function Deeplink(config) {

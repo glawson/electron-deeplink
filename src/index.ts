@@ -3,11 +3,10 @@ import fs from 'fs';
 import os from 'os';
 import { App, BrowserWindow } from 'electron';
 import { EventEmitter } from 'events';
-import bindings from 'bindings';
 import stub from './stub';
 import { infoPlistTemplate } from './templates';
 
-const electronDeeplink = os.platform() === 'darwin' ? bindings('electron-deeplink.node') : stub;
+const electronDeeplink = os.platform() === 'darwin' ? require('bindings')('electron-deeplink.node') : stub;
 
 interface Process extends NodeJS.Process {
     mas: boolean;
