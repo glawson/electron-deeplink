@@ -125,11 +125,11 @@ var Deeplink = /** @class */ (function (_super) {
                 });
             }
         }
-        if (os.platform() === 'darwin') {
+        if (os_1.default.platform() === 'darwin') {
             app.setAsDefaultProtocolClient(protocol);
         }
         else {
-            var args = process.argv[1] ? [path.resolve(process.argv[1])] : [];
+            var args = process.argv[1] ? [path_1.default.resolve(process.argv[1])] : [];
             app.setAsDefaultProtocolClient(protocol, process.execPath, args);
         }
         app.on('second-instance', _this.secondInstanceEvent);
