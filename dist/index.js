@@ -12,14 +12,18 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Deeplink = void 0;
-var path = require('path');
-var fs = require('fs');
-var os = require('os');
-var EventEmitter = require('events');
-var electronDeeplink = os.platform() === 'darwin' ? require('bindings')('electron-deeplink.node') : require('./stub');
-var infoPlistTemplate = require('./templates').infoPlistTemplate;
+var path_1 = __importDefault(require("path"));
+var fs_1 = __importDefault(require("fs"));
+var os_1 = __importDefault(require("os"));
+var events_1 = require("events");
+var stub_1 = __importDefault(require("./stub"));
+var templates_1 = require("./templates");
+var electronDeeplink = os_1.default.platform() === 'darwin' ? require('bindings')('electron-deeplink.node') : stub_1.default;
 var Deeplink = /** @class */ (function (_super) {
     __extends(Deeplink, _super);
     function Deeplink(config) {
@@ -36,30 +40,30 @@ var Deeplink = /** @class */ (function (_super) {
         };
         _this.setAppProtocol = function () {
             var _a = _this.config, protocol = _a.protocol, debugLogging = _a.debugLogging;
-            var bundleURL = infoPlistTemplate.replace(/{PROTOCOL}/g, protocol);
+            var bundleURL = templates_1.infoPlistTemplate.replace(/{PROTOCOL}/g, protocol);
             var infoPlist;
             _this.appPath = _this.app.getAppPath();
-            _this.electronPath = path.join(_this.appPath, _this.config.electronPath);
-            _this.infoPlistFile = path.join(_this.electronPath, '/Contents/Info.plist');
-            _this.infoPlistFileBak = path.join(_this.electronPath, '/Contents/Info.deeplink');
-            if (fs.existsSync(_this.infoPlistFileBak)) {
-                infoPlist = fs.readFileSync(_this.infoPlistFileBak, 'utf-8');
+            _this.electronPath = path_1.default.join(_this.appPath, _this.config.electronPath);
+            _this.infoPlistFile = path_1.default.join(_this.electronPath, '/Contents/Info.plist');
+            _this.infoPlistFileBak = path_1.default.join(_this.electronPath, '/Contents/Info.deeplink');
+            if (fs_1.default.existsSync(_this.infoPlistFileBak)) {
+                infoPlist = fs_1.default.readFileSync(_this.infoPlistFileBak, 'utf-8');
             }
             else {
-                infoPlist = fs.readFileSync(_this.infoPlistFile, 'utf-8');
-                fs.writeFileSync(_this.infoPlistFileBak, infoPlist);
+                infoPlist = fs_1.default.readFileSync(_this.infoPlistFile, 'utf-8');
+                fs_1.default.writeFileSync(_this.infoPlistFileBak, infoPlist);
             }
             infoPlist = infoPlist.replace('com.github.Electron', "com.deeplink." + protocol);
             infoPlist = infoPlist.replace(/<\/dict>\n<\/plist>/, bundleURL);
-            fs.writeFileSync(_this.infoPlistFile, infoPlist);
+            fs_1.default.writeFileSync(_this.infoPlistFile, infoPlist);
             return electronDeeplink.SetRuntimeAppProtocol(_this.electronPath, protocol, debugLogging);
         };
         _this.secondInstanceEvent = function (event, argv) {
-            if (os.platform() === 'darwin') {
+            if (os_1.default.platform() === 'darwin') {
                 _this.logger.error("electron-deeplink: the app event 'second-instance' fired, this should not of happened, please check your packager bundleId config");
                 return;
             }
-            if (os.platform() === 'win32') {
+            if (os_1.default.platform() === 'win32') {
                 _this.emit('received', argv.slice(-1).join(''));
             }
             if (_this.mainWindow) {
@@ -79,15 +83,15 @@ var Deeplink = /** @class */ (function (_super) {
         };
         _this.restoreInfoPlist = function () {
             var _a = _this.config, debugLogging = _a.debugLogging, isDev = _a.isDev;
-            if (!isDev || os.platform() !== 'darwin') {
+            if (!isDev || os_1.default.platform() !== 'darwin') {
                 return;
             }
-            if (fs.existsSync(_this.infoPlistFileBak)) {
-                var infoPlist = fs.readFileSync(_this.infoPlistFileBak, 'utf-8');
+            if (_this.infoPlistFile && _this.infoPlistFileBak && fs_1.default.existsSync(_this.infoPlistFileBak)) {
+                var infoPlist = fs_1.default.readFileSync(_this.infoPlistFileBak, 'utf-8');
                 if (debugLogging) {
                     _this.logger.debug("electron-deeplink: restoring Info.plist");
                 }
-                fs.writeFileSync(_this.infoPlistFile, infoPlist);
+                fs_1.default.writeFileSync(_this.infoPlistFile, infoPlist);
             }
         };
         _this.getProtocol = function () { return _this.config.protocol; };
@@ -112,7 +116,7 @@ var Deeplink = /** @class */ (function (_super) {
             app.quit();
             return _this;
         }
-        if (isDev && os.platform() === 'darwin') {
+        if (isDev && os_1.default.platform() === 'darwin') {
             var handlerDebug_1 = _this.setAppProtocol();
             if (debugLogging) {
                 Object.keys(handlerDebug_1).forEach(function (key) {
@@ -120,11 +124,11 @@ var Deeplink = /** @class */ (function (_super) {
                 });
             }
         }
-        if (os.platform() === 'darwin') {
+        if (os_1.default.platform() === 'darwin') {
             app.setAsDefaultProtocolClient(protocol);
         }
         else {
-            var args = process.argv[1] ? [path.resolve(process.argv[1])] : [];
+            var args = process.argv[1] ? [path_1.default.resolve(process.argv[1])] : [];
             app.setAsDefaultProtocolClient(protocol, process.execPath, args);
         }
         app.on('second-instance', _this.secondInstanceEvent);
@@ -135,5 +139,5 @@ var Deeplink = /** @class */ (function (_super) {
         return _this;
     }
     return Deeplink;
-}(EventEmitter));
+}(events_1.EventEmitter));
 exports.Deeplink = Deeplink;

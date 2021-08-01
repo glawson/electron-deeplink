@@ -2,7 +2,13 @@
     "name": "electron-deeplink",
     "version": "0.0.0-development",
     "description": "Node module for Electron apps that sets the default handler for a given protocol (deeplinks) in both development and production environments.",
-    "keywords": ["electron", "deeplink", "protocol", "win32", "macos"],
+    "keywords": [
+        "electron",
+        "deeplink",
+        "protocol",
+        "win32",
+        "macos"
+    ],
     "main": "./dist/index.js",
     "files": [
         "/dist",
@@ -21,6 +27,7 @@
     "author": "",
     "license": "MIT",
     "devDependencies": {
+        "@types/bindings": "^1.5.1",
         "@types/mocha": "^8.0.2",
         "@types/node": "^14.0.27",
         "chai": "^4.2.0",
@@ -29,12 +36,13 @@
         "node-gyp": "^6.0.1",
         "nyc": "^15.1.0",
         "prettier": "^2.0.5",
+        "semantic-release": "^17.1.1",
         "sinon": "^9.0.2",
         "ts-node": "^8.10.2",
-        "typescript": "^3.9.7",
-        "semantic-release": "^17.1.1"
+        "typescript": "^3.9.7"
     },
     "dependencies": {
+        "@types/electron": "^1.6.10",
         "bindings": "^1.5.0",
         "electron-log": "^4.2.3",
         "node-addon-api": "^2.0.0"
