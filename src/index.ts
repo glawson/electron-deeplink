@@ -1,9 +1,13 @@
-const path = require('path');
-const fs = require('fs');
-const os = require('os');
-const EventEmitter = require('events');
-const electronDeeplink = os.platform() === 'darwin' ? require('bindings')('electron-deeplink.node') : require('./stub');
-const { infoPlistTemplate } = require('./templates');
+import path from 'path';
+import fs from 'fs';
+import os from 'os';
+import { App, BrowserWindow } from 'electron';
+import { EventEmitter } from 'events';
+import bindings from 'bindings';
+import stub from './stub';
+import { infoPlistTemplate } from './templates';
+
+const electronDeeplink = os.platform() === 'darwin' ? bindings('electron-deeplink.node') : stub;
 
 interface Process extends NodeJS.Process {
     mas: boolean;
@@ -11,53 +15,18 @@ interface Process extends NodeJS.Process {
 
 declare const process: Process;
 
-interface FuncBool {
-    (param?: any): boolean;
-}
-
-interface FuncVoid {
-    (param?: any, path?: any, argv?: any): void;
-}
-
-interface FuncString {
-    (param?: any): string;
-}
-
-interface OnCallback {
-    (event: Event, argv: any): void;
-}
-
-interface On {
-    (event: string, callback: OnCallback): void;
-}
-
-interface App {
-    requestSingleInstanceLock: FuncBool;
-    isDefaultProtocolClient: FuncBool;
-    setAsDefaultProtocolClient: FuncVoid;
-    quit: FuncVoid;
-    on: On;
-    getAppPath: FuncString;
-}
-
-interface MainWindow {
-    isMinimized: FuncBool;
-    restore: FuncVoid;
-    focus: FuncVoid;
-}
-
 interface DeeplinkConfig {
     protocol: string;
     app: App;
-    mainWindow: MainWindow;
+    mainWindow: BrowserWindow;
     isDev?: boolean;
     isYarn?: boolean;
     debugLogging?: boolean;
-    electronPath: string;
+    electronPath?: string;
 }
 
 interface InstanceConfig {
-    protocol: string | null;
+    protocol: string;
     debugLogging: boolean;
     isDev: boolean;
     electronPath: string;
@@ -70,7 +39,7 @@ class Deeplink extends EventEmitter {
     private infoPlistFileBak?: string;
     private logger?: any;
     private app: App;
-    private mainWindow: MainWindow;
+    private mainWindow: BrowserWindow;
     private config: InstanceConfig;
 
     constructor(config: DeeplinkConfig) {
@@ -203,7 +172,7 @@ class Deeplink extends EventEmitter {
             return;
         }
 
-        if (fs.existsSync(this.infoPlistFileBak)) {
+        if (this.infoPlistFile && this.infoPlistFileBak && fs.existsSync(this.infoPlistFileBak)) {
             const infoPlist = fs.readFileSync(this.infoPlistFileBak, 'utf-8');
 
             if (debugLogging) {
