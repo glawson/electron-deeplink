@@ -6,7 +6,6 @@ interface DeeplinkConfig {
     app: App;
     mainWindow: BrowserWindow;
     isDev?: boolean;
-    isYarn?: boolean;
     debugLogging?: boolean;
     electronPath?: string;
 }
@@ -23,7 +22,7 @@ declare class Deeplink extends EventEmitter {
     private checkConfig;
     private setAppProtocol;
     private secondInstanceEvent;
-    private openEvent;
+    private darwinOpenEvent;
     restoreInfoPlist: () => void;
     getProtocol: () => string;
     getLogfile: () => any;

@@ -19,7 +19,6 @@ interface DeeplinkConfig {
     app: App;
     mainWindow: BrowserWindow;
     isDev?: boolean;
-    isYarn?: boolean;
     debugLogging?: boolean;
     electronPath?: string;
 }
@@ -57,7 +56,7 @@ class Deeplink extends EventEmitter {
             this.logger.debug(`electron-deeplink: debugLogging is enabled`);
         }
 
-        const instanceLock = process.mas === true ? true : app.requestSingleInstanceLock();
+        const instanceLock = process.mas === true || app.requestSingleInstanceLock();
 
         if (!instanceLock) {
             if (debugLogging) {
@@ -81,6 +80,11 @@ class Deeplink extends EventEmitter {
 
         if (os.platform() === 'darwin') {
             app.setAsDefaultProtocolClient(protocol);
+
+            app.on('will-finish-launching', () => {
+                app.on('open-url', (event, url) => this.darwinOpenEvent(event, url, 'open-url'));
+                app.on('open-file', (event, url) => this.darwinOpenEvent(event, url, 'open-file'));
+            });
         } else {
             const args = process.argv[1] ? [path.resolve(process.argv[1])] : [];
             
@@ -88,11 +92,6 @@ class Deeplink extends EventEmitter {
         } 
 
         app.on('second-instance', this.secondInstanceEvent);
-
-        app.on('will-finish-launching', () => {
-            app.on('open-url', (event, url) => this.openEvent(event, url, 'open-url'));
-            app.on('open-file', (event, url) => this.openEvent(event, url, 'open-file'));
-        });
     }
 
     private checkConfig = (config: DeeplinkConfig) => {
@@ -144,6 +143,8 @@ class Deeplink extends EventEmitter {
 
         if (os.platform() === 'win32') {
             this.emit('received', argv.slice(-1).join(''));
+        } else {
+            this.emit('received', ...argv);
         }
 
         if (this.mainWindow) {
@@ -154,7 +155,7 @@ class Deeplink extends EventEmitter {
         }
     };
 
-    private openEvent = (event: any, url: string, eventName: string) => {
+    private darwinOpenEvent = (event: any, url: string, eventName: string) => {
         event.preventDefault();
         const { debugLogging } = this.config;
 

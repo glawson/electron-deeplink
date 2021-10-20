@@ -1,14 +1,11 @@
-import { argv } from 'process';
-import { dirname } from 'path';
+import { expect } from 'chai';
 
-const { expect } = require('chai');
+import { EventEmitter } from 'events';
+import os from 'os';
+import fs from 'fs';
+import sinon from 'sinon';
+import logger from 'electron-log';
 
-const path = require('path');
-const EventEmitter = require('events');
-const os = require('os');
-const fs = require('fs');
-const sinon = require('sinon');
-const logger = require('electron-log');
 const appPath = __dirname;
 
 class App extends EventEmitter {
@@ -21,7 +18,7 @@ class App extends EventEmitter {
     setAsDefaultProtocolClient = () => null;
     quit = () => null;
 }
-const mainWindowMock = {
+const mainWindow = {
     focus: () => null,
     isMinimized: () => true,
     restore: () => null,
@@ -46,7 +43,7 @@ describe('electron-deeplink', () => {
 
     it('should return an instance of Deeplink', () => {
         const appMock = new App();
-        const deeplink = new Deeplink({ app: appMock, mainWindow: mainWindowMock, protocol, isDev: true });
+        const deeplink = new Deeplink({ app: appMock, mainWindow, protocol, isDev: true });
 
         expect(deeplink).to.be.instanceOf(Deeplink);
     });
@@ -61,7 +58,7 @@ describe('electron-deeplink', () => {
         const appMock = new App();
         const spy1 = sinon.spy(logger, 'debug');
 
-        new Deeplink({ app: appMock, mainWindow: mainWindowMock, protocol, isDev: true, debugLogging: true });
+        new Deeplink({ app: appMock, mainWindow, protocol, isDev: true, debugLogging: true });
 
         expect(spy1.called).to.equal(true);
     });
@@ -76,61 +73,29 @@ describe('electron-deeplink', () => {
         const appMock = new AppMock();
 
         const spy1 = sinon.spy(appMock, 'quit');
-        new Deeplink({ app: appMock, mainWindow: mainWindowMock, protocol, isDev: true, debugLogging: true });
+        new Deeplink({ app: appMock, mainWindow, protocol, isDev: true, debugLogging: true });
 
         expect(spy1.called).to.equal(true);
     });
 
-    it('should error on app second-instance event if darwin', () => {
+    it('should run darwinOpenEvent on macOS app open-url event', () => {
         const appMock = new App();
-        const spy1 = sinon.spy(logger, 'error');
-        const stub1 = sinon.stub(os, 'platform').callsFake(() => 'darwin');
-
-        new Deeplink({ app: appMock, mainWindow: mainWindowMock, protocol, isDev: true, debugLogging: true });
-
-        appMock.emit('second-instance');
-
-        expect(spy1.getCall(0).args[0]).to.equal(
-            "electron-deeplink: the app event 'second-instance' fired, this should not of happened, please check your packager bundleId config"
-        );
-
-        stub1.restore();
-    });
-
-    it('should run mainWidow.focus on app second-instance event', () => {
-        const appMock = new App();
-        const spy1 = sinon.spy(mainWindowMock, 'isMinimized');
-        const spy2 = sinon.spy(mainWindowMock, 'restore');
-        const spy3 = sinon.spy(mainWindowMock, 'focus');
-        const stub1 = sinon.stub(os, 'platform').callsFake(() => 'win32');
-
-        new Deeplink({ app: appMock, mainWindow: mainWindowMock, protocol, isDev: true, debugLogging: true });
-
-        appMock.emit('second-instance', {}, ['path', 'path', protocol]);
-
-        expect(spy1.called).to.equal(true);
-        expect(spy2.called).to.equal(true);
-        expect(spy3.called).to.equal(true);
-
-        stub1.restore();
-    });
-
-    it('should run openEvent on app open-url event', () => {
-        const appMock = new App();
-        const deeplink = new Deeplink({ app: appMock, mainWindow: mainWindowMock, protocol, isDev: true, debugLogging: true });
-        const spy1 = sinon.spy(deeplink, 'openEvent');
+        const platformStub = sinon.stub(os, 'platform').returns('darwin');
+        const deeplink = new Deeplink({ app: appMock, mainWindow, protocol, isDev: true, debugLogging: true });
+        const spy1 = sinon.spy(deeplink, 'darwinOpenEvent');
 
         appMock.emit('will-finish-launching');
         appMock.emit('open-url', eventMock, protocol);
 
         expect(spy1.called).to.equal(true);
+        platformStub.restore();
     });
 
     it('should run setAppProtocol with existing Info.plist', () => {
         const appMock = new App();
         const stub1 = sinon.stub(os, 'platform').callsFake(() => 'darwin');
         const stub2 = sinon.stub(fs, 'existsSync').callsFake(() => true);
-        const deeplink = new Deeplink({ app: appMock, mainWindow: mainWindowMock, protocol, isDev: true, debugLogging: false });
+        const deeplink = new Deeplink({ app: appMock, mainWindow, protocol, isDev: true, debugLogging: false });
         const spy1 = sinon.spy(deeplink, 'setAppProtocol');
 
         deeplink.setAppProtocol();
@@ -145,7 +110,7 @@ describe('electron-deeplink', () => {
         const appMock = new App();
         const stub1 = sinon.stub(os, 'platform').callsFake(() => 'darwin');
         const stub2 = sinon.stub(fs, 'existsSync').callsFake(() => false);
-        const deeplink = new Deeplink({ app: appMock, mainWindow: mainWindowMock, protocol, isDev: true, debugLogging: false });
+        const deeplink = new Deeplink({ app: appMock, mainWindow, protocol, isDev: true, debugLogging: false });
         const spy1 = sinon.spy(deeplink, 'setAppProtocol');
 
         deeplink.setAppProtocol();
@@ -164,7 +129,7 @@ describe('electron-deeplink', () => {
 
         const deeplink = new Deeplink({
             app: appMock,
-            mainWindow: mainWindowMock,
+            mainWindow,
             protocol,
             isDev: true,
             debugLogging: true,
@@ -193,7 +158,7 @@ describe('electron-deeplink', () => {
 
         const deeplink = new Deeplink({
             app: appMock,
-            mainWindow: mainWindowMock,
+            mainWindow,
             protocol,
             isDev: true,
             debugLogging: false,
@@ -209,7 +174,7 @@ describe('electron-deeplink', () => {
 
         const deeplink = new Deeplink({
             app: appMock,
-            mainWindow: mainWindowMock,
+            mainWindow,
             protocol,
             isDev: true,
             debugLogging: false,
@@ -219,4 +184,86 @@ describe('electron-deeplink', () => {
 
         expect(results).to.equal('debugLogging is disabled');
     });
+
+    describe('When a second instance is opened', () => {
+        let platformStub: sinon.SinonStub;
+        let loggerSpy: sinon.SinonSpy;
+        let appMock: App;
+        let deeplink;
+        let deeplinkEmitSpy: sinon.SinonSpy;
+        const windowStub = sinon.stub(mainWindow);
+        const args = ['foo', 'bar'];
+
+        beforeEach(() => {
+            loggerSpy = sinon.spy(logger, 'error');
+            appMock = new App();
+            windowStub.isMinimized.returns(true);
+        })
+        afterEach(() => {
+            platformStub.restore();
+            loggerSpy.restore();
+            windowStub.isMinimized.reset();
+            windowStub.restore.reset();
+            windowStub.focus.reset();
+        })
+
+        describe('When platform is darwin', () => {
+            beforeEach(() => {
+                platformStub = sinon.stub(os, 'platform').returns('darwin');
+                deeplink = new Deeplink({ app: appMock, mainWindow: windowStub, protocol, isDev: true, debugLogging: true });
+                deeplinkEmitSpy = sinon.spy(deeplink, 'emit');
+                appMock.emit('second-instance', eventMock, args);
+            })
+            it('should error on app second-instance event if darwin', () => {
+                expect(loggerSpy.getCall(0).args[0]).to.equal(
+                    "electron-deeplink: the app event 'second-instance' fired, this should not of happened, please check your packager bundleId config"
+                );
+            });
+            it('should not emit the "received" event via this handler', () => {
+                expect(deeplinkEmitSpy.called).to.equal(false);
+            });
+            it('should not restore and focus the mainWindow', () => {
+                expect(windowStub.isMinimized.called).to.equal(false);
+                expect(windowStub.restore.called).to.equal(false);
+                expect(windowStub.focus.called).to.equal(false);
+            })
+        });
+
+        describe('When platform is win32', () => {
+            beforeEach(() => {
+                platformStub = sinon.stub(os, 'platform').returns('win32');
+                deeplink = new Deeplink({ app: appMock, mainWindow: windowStub, protocol, isDev: true, debugLogging: true });
+                deeplinkEmitSpy = sinon.spy(deeplink, 'emit');
+                appMock.emit('second-instance', eventMock, args);
+            })
+            it('should emit the "received" event with the only the last arg', () => {
+                expect(deeplinkEmitSpy.calledWith('received', 'bar')).to.equal(true);
+            });
+
+            it('should restore and focus the mainWindow', () => {
+                expect(windowStub.isMinimized.called).to.equal(true);
+                expect(windowStub.restore.called).to.equal(true);
+                expect(windowStub.focus.called).to.equal(true);
+            })
+        }),
+
+            describe('When platform is linux', () => {
+                beforeEach(() => {
+                    platformStub = sinon.stub(os, 'platform').returns('linux');
+                    deeplink = new Deeplink({ app: appMock, mainWindow: windowStub, protocol, isDev: true, debugLogging: true });
+                    deeplinkEmitSpy = sinon.spy(deeplink, 'emit');
+                    appMock.emit('second-instance', eventMock, args);
+                })
+                it('should emit the "received" event with args', () => {
+                    expect(deeplinkEmitSpy.calledWith('received', ...args)).to.equal(true);
+                });
+
+                it('should restore and focus the mainWindow', () => {
+                    expect(windowStub.isMinimized.called).to.equal(true);
+                    expect(windowStub.restore.called).to.equal(true);
+                    expect(windowStub.focus.called).to.equal(true);
+                })
+            })
+    })
+
 });

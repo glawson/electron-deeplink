@@ -12,6 +12,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -59,12 +66,16 @@ var Deeplink = /** @class */ (function (_super) {
             return electronDeeplink.SetRuntimeAppProtocol(_this.electronPath, protocol, debugLogging);
         };
         _this.secondInstanceEvent = function (event, argv) {
-            if (os_1.default.platform() === 'darwin') {
+            var debugLogging = _this.config.debugLogging;
+            if (os_1.default.platform() === 'darwin' && debugLogging) {
                 _this.logger.error("electron-deeplink: the app event 'second-instance' fired, this should not of happened, please check your packager bundleId config");
                 return;
             }
             if (os_1.default.platform() === 'win32') {
                 _this.emit('received', argv.slice(-1).join(''));
+            }
+            else {
+                _this.emit.apply(_this, __spreadArrays(['received'], argv));
             }
             if (_this.mainWindow) {
                 if (_this.mainWindow.isMinimized()) {
@@ -73,7 +84,7 @@ var Deeplink = /** @class */ (function (_super) {
                 _this.mainWindow.focus();
             }
         };
-        _this.openEvent = function (event, url, eventName) {
+        _this.darwinOpenEvent = function (event, url, eventName) {
             event.preventDefault();
             var debugLogging = _this.config.debugLogging;
             if (debugLogging) {
@@ -108,7 +119,7 @@ var Deeplink = /** @class */ (function (_super) {
             _this.logger.transports.file.level = 'debug';
             _this.logger.debug("electron-deeplink: debugLogging is enabled");
         }
-        var instanceLock = process.mas === true ? true : app.requestSingleInstanceLock();
+        var instanceLock = process.mas === true || app.requestSingleInstanceLock();
         if (!instanceLock) {
             if (debugLogging) {
                 _this.logger.debug("electron-deeplink: unable to lock instance");
@@ -126,16 +137,16 @@ var Deeplink = /** @class */ (function (_super) {
         }
         if (os_1.default.platform() === 'darwin') {
             app.setAsDefaultProtocolClient(protocol);
+            app.on('will-finish-launching', function () {
+                app.on('open-url', function (event, url) { return _this.darwinOpenEvent(event, url, 'open-url'); });
+                app.on('open-file', function (event, url) { return _this.darwinOpenEvent(event, url, 'open-file'); });
+            });
         }
         else {
             var args = process.argv[1] ? [path_1.default.resolve(process.argv[1])] : [];
             app.setAsDefaultProtocolClient(protocol, process.execPath, args);
         }
         app.on('second-instance', _this.secondInstanceEvent);
-        app.on('will-finish-launching', function () {
-            app.on('open-url', function (event, url) { return _this.openEvent(event, url, 'open-url'); });
-            app.on('open-file', function (event, url) { return _this.openEvent(event, url, 'open-file'); });
-        });
         return _this;
     }
     return Deeplink;
