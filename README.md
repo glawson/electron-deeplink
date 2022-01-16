@@ -7,7 +7,7 @@
 Node module for Electron apps that sets the default handler for a given protocol (deep links) in both
 development and production environments.
 
-This module was inspired due to the lack of protocol support when running non packaged apps on macOS (see [app.setAsDefaultProtocolClient](https://www.electronjs.org/docs/api/app#appsetasdefaultprotocolclientprotocol-path-args) for explanation). This module provides full support for running and testing the given protocol in the development environment. It also provides the same protocol support for the production envronment. In other words, protocol management is completly controlled with this module.
+This module was inspired due to the lack of protocol support when running non packaged apps on macOS (see [`app.setAsDefaultProtocolClient`](https://www.electronjs.org/docs/api/app#appsetasdefaultprotocolclientprotocol-path-args) for explanation). This module provides full support for running and testing the given protocol in the development environment. It also provides the same protocol support for the production envronment. In other words, protocol management is completly controlled with this module.
 
 # Please Note
 
@@ -15,23 +15,23 @@ This module was inspired due to the lack of protocol support when running non pa
 
 # Example App
 
-A full working example can be found at [https://github.com/glawson/electron-deeplink-example](https://github.com/glawson/electron-deeplink-example)
+A full working example can be found [here](https://github.com/glawson/electron-deeplink-example)
 
 # Installation
 
-```
-// if you use npm:
+```sh
+# If you use npm:
 npm install electron-deeplink
 
-// if you use yarn:
-yarn add electron-deeplink
+# If you use yarn:
+$ yarn add electron-deeplink
 ```
 
 # Usage
 
-In main.js, include the electron-deeplink module and instantiate the Deeplink class towards to begining of main.js.
+In `main.js`, include the `electron-deeplink` module and instantiate the Deeplink class towards to begining of `main.js`.
 
-```
+```js
 // main.js
 const { app, BrowserWindow } = require('electron');
 const { Deeplink } = require('electron-deeplink');
@@ -44,7 +44,7 @@ const deeplink = new Deeplink({ app, mainWindow, protocol, isDev });
 
 Setup a watch on the deeplink 'received' event
 
-```
+```js
 // main.js
 deeplink.on('received', (link) => {
     // do stuff here
@@ -55,13 +55,13 @@ deeplink.on('received', (link) => {
 
 ## creating an instance
 
-```
+```js
 const deeplink = new Deeplink([config]);
 ```
 
 ## config
 
-```
+```ts
 {
     // required
     // type: electron app
@@ -80,12 +80,12 @@ const deeplink = new Deeplink([config]);
     // optional, default: false
     // type: boolean
     // Represents the app environment
-    isDev: false|true
+    isDev: boolean
 
     // optional, default: false
     // type: boolean
     // If true, outputs logging.  Uses electron-log, so files are appened/created for prod.
-    debugLogging: false|true
+    debugLogging: boolean
 
     // optional, default: '/node_modules/electron/dist/Electron.app'
     // type: string
@@ -96,7 +96,7 @@ const deeplink = new Deeplink([config]);
 
 ## events
 
-```
+```js
 // 'recieved'
 // When a "deeplink" is recieved by the module, this event is emitted.
 
