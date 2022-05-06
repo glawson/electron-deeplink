@@ -141,10 +141,10 @@ class Deeplink extends EventEmitter {
             return;
         }
 
-        if (os.platform() === 'win32') {
-            this.emit('received', argv.slice(-1).join(''));
-        } else {
+        if (os.platform() === 'darwin') {
             this.emit('received', ...argv);
+        } else {
+            this.emit('received', argv.slice(-1).join(''));
         }
 
         if (this.mainWindow) {
