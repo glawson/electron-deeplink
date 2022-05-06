@@ -71,11 +71,11 @@ var Deeplink = /** @class */ (function (_super) {
                 _this.logger.error("electron-deeplink: the app event 'second-instance' fired, this should not of happened, please check your packager bundleId config");
                 return;
             }
-            if (os_1.default.platform() === 'win32') {
-                _this.emit('received', argv.slice(-1).join(''));
+            if (os_1.default.platform() === 'darwin') {
+                _this.emit.apply(_this, __spreadArrays(['received'], argv));
             }
             else {
-                _this.emit.apply(_this, __spreadArrays(['received'], argv));
+                _this.emit('received', argv.slice(-1).join(''));
             }
             if (_this.mainWindow) {
                 if (_this.mainWindow.isMinimized()) {
