@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
-import { App, BrowserWindow } from 'electron';
+import { App, BrowserWindow, Event } from 'electron';
 import { EventEmitter } from 'events';
 import stub from './stub';
 import { infoPlistTemplate } from './templates';
@@ -81,7 +81,7 @@ class Deeplink extends EventEmitter {
         if (os.platform() === 'darwin') {
             app.setAsDefaultProtocolClient(protocol);
 
-            app.on('will-finish-launching', () => {
+            app.whenReady(() => {
                 app.on('open-url', (event, url) => this.darwinOpenEvent(event, url, 'open-url'));
                 app.on('open-file', (event, url) => this.darwinOpenEvent(event, url, 'open-file'));
             });
