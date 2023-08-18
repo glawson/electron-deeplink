@@ -2,6 +2,12 @@
 ![ts](https://badgen.net/badge/-/TypeScript?icon=typescript&label&labelColor=blue&color=555555)
 [![glawson](https://circleci.com/gh/glawson/electron-deeplink.svg?style=shield)](https://circleci.com/gh/glawson/electron-deeplink)
 
+# 🚨 Deprecation Notice 🚨
+The bad news; due to a lack of time and, unfortunitly, no longer directly working with Electrion, I need to deprecate this package.  
+The good news; @witcher112 has picked up the pieces, and created a better protocol package.  
+
+You can find it at: [electron-app-universal-protocol-client](https://github.com/witcher112/electron-app-universal-protocol-client)
+
 # electron-deeplink
 
 Node module for Electron apps that sets the default handler for a given protocol (deep links) in both
