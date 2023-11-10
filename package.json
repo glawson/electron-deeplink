@@ -35,10 +35,9 @@
         "chai": "^4.2.0",
         "clang-format": "^1.4.0",
         "mocha": "^8.1.1",
-        "node-gyp": "^6.0.1",
         "nyc": "^15.1.0",
         "prettier": "^2.0.5",
-        "semantic-release": "^17.1.1",
+        "semantic-release": "^22.0.7",
         "sinon": "^9.0.2",
         "ts-node": "^8.10.2",
         "typescript": "^3.9.7"
@@ -47,7 +46,8 @@
         "@types/electron": "^1.6.10",
         "bindings": "^1.5.0",
         "electron-log": "^4.2.3",
-        "node-addon-api": "^2.0.0"
+        "node-addon-api": "^2.0.0",
+        "node-gyp": "^10.0.1"
     },
     "repository": {
         "type": "git",
