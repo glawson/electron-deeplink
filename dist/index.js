@@ -146,7 +146,6 @@ var Deeplink = /** @class */ (function (_super) {
             var args = process.argv[1] ? [path_1.default.resolve(process.argv[1])] : [];
             app.setAsDefaultProtocolClient(protocol, process.execPath, args);
         }
-        app.on('second-instance', _this.secondInstanceEvent);
         return _this;
     }
     return Deeplink;
