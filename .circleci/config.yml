@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build_and_test:
     macos:
-      xcode: 13.2.1
+      xcode: 15.0.0
     steps:
       - checkout
       - run: 
@@ -16,7 +16,7 @@ jobs:
           command: npm run test
   build_and_release: 
     macos:
-      xcode: 13.2.1
+      xcode: 15.0.0
     steps:
       - checkout
       - run: 
